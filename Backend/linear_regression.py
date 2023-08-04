@@ -75,46 +75,6 @@ def PREDICT():
     print("Predicted next period start date:", formatted_next_period_start_date)
     print("Predicted next period end date:", formatted_next_period_end_date)
 
-
-    '''
-    plt.figure(figsize=(4, 4))
-    plt.rcParams.update({'font.size': 16})
-
-    plt.plot(cycle_length, '-->', color='blue')
-    plt.plot(periods, '-*', color='green')
-    plt.plot(test_y, ':o', color='red')
-    plt.plot(cycles_numbers[-1], prediction_one_step_ahead[0][0], '-->', color='blue')
-    plt.plot(cycles_numbers[-1], prediction_one_step_ahead[0][1], '-*', color='green')
-    plt.legend(['Cycle Duration (Predicted)', 'Period Variation (Predicted)', 'Real Data'])
-    plt.grid()
-    plt.xlabel('Cycles')
-    plt.ylabel('Days')
-    plt.title('Linear Regression Model')
-    fig = plt.gcf()
-    #fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
-    #plt.show()
-
-    error = abs(test_y - y_pred)
-    plt.plot(error[:, 0], '-->', color='blue')
-    plt.plot(error[:, 1], '-*', color='green')
-    plt.legend(['Cycle Error', 'Period Error'])
-    plt.grid()
-    plt.xlabel('Cycles')
-    plt.ylabel('Days')
-    plt.title('Linear Regression Model')
-    fig = plt.gcf()
-    #fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
-    #plt.show()
-
-    # Calculate RMSE (Root Mean Squared Error)
-    rms = sqrt(mean_squared_error(test_y, y_pred))
-    print('RMSE: ', rms)
-
-    # Calculate MAE (Mean Absolute Error)
-    mae = np.mean(np.abs((test_y - y_pred)))
-    print('MAE: ', mae)'''
-
-
     #Calculate irregularities
     print("Actual Date?")
     day = input("Day: ")
