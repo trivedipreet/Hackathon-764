@@ -3,7 +3,7 @@ import pandas as pd
 import openpyxl
 
 #try:
-conn = sqlite3.connect('Rujuta\PeriodTracker.db') #database path
+conn = sqlite3.connect('Backend\PeriodTracker.db') #database path
 cur = conn.cursor()
 
 #create tables:

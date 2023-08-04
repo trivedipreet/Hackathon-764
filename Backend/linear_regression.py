@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # Open synthetic dataset
     #df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
     
-    conn = sqlite3.connect('Rujuta\PeriodTracker.db') #database path
+    conn = sqlite3.connect('Backend\PeriodTracker.db') #database path
     cur = conn.cursor()
     userid = 1
     query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {}".format(userid)
