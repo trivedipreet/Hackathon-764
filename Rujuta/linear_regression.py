@@ -11,11 +11,14 @@ from math import sqrt
 
 if __name__ == '__main__':
     # Open synthetic dataset
-    df = pd.read_csv('Rujuta/synthetic_data.csv', sep=',', header=0)
+    df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
+
     # Prepare data for linear regression/machine learning model
     periods_data = utils.calculate_datatime(df)
+    #print(periods_data)
+    
     features, labels = utils.generate_final_features(df)
-
+'''
     x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=10)
     # Reshape data for linear regression/machine learning model
     train_y = np.array(y_train)
@@ -59,7 +62,7 @@ if __name__ == '__main__':
     plt.title('Linear Regression Model')
     fig = plt.gcf()
     fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    #plt.show()
 
     error = abs(test_y - y_pred)
     plt.plot(error[:, 0], '-->', color='blue')
@@ -71,7 +74,7 @@ if __name__ == '__main__':
     plt.title('Linear Regression Model')
     fig = plt.gcf()
     fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    #plt.show()
 
     # Calculate RMSE (Root Mean Squared Error)
     rms = sqrt(mean_squared_error(test_y, y_pred))
@@ -80,3 +83,4 @@ if __name__ == '__main__':
     # Calculate MAE (Mean Absolute Error)
     mae = np.mean(np.abs((test_y - y_pred)))
     print('MAE: ', mae)
+'''
