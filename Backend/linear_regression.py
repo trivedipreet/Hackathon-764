@@ -111,3 +111,36 @@ def PREDICT():
     print("Predicted cycle-2 period end date:", formatted_next_period_end_date_2)
     print("Predicted cycle-3 period start date:", formatted_next_period_start_date_3)
     print("Predicted cycle-3 period end date:", formatted_next_period_end_date_3)
+    
+    
+    def lateperiod(forgottoenter):
+       
+       if forgottoenter:
+         current_date = datetime.now().date()
+         predstart1 = datetime.strptime(formatted_next_period_start_date, "%Y-%m-%d").date()
+         predstart2 = datetime.strptime(formatted_next_period_start_date_2, "%Y-%m-%d").date()
+         predstart3 = datetime.strptime(formatted_next_period_start_date_3, "%Y-%m-%d").date()
+        
+         if predstart1 < current_date:
+                 d1 = {'start': formatted_next_period_start_date,
+                    'end': formatted_next_period_end_date}
+                 add_new_row_to_table(d1, 'periodLog', conn,2)
+         if predstart2 < current_date:
+                 d2 = {'start': formatted_next_period_start_date_2,
+                    'end': formatted_next_period_end_date_2 }
+                 add_new_row_to_table(d2, 'periodLog', conn,2)
+         if predstart3 < current_date:
+                 d3 = {'start': formatted_next_period_start_date_3,
+                    'end': formatted_next_period_end_date_3 }
+                 add_new_row_to_table(d3, 'periodLog', conn,2)
+             
+             
+
+
+
+
+
+   
+        
+        
+        
