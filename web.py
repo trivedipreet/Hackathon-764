@@ -11,6 +11,76 @@ def load_translations(lang):
     translation.install()
     return translation
 
+# Define a function for handling registration of regular patients
+def register_regular_patient():
+    # Your code for handling registration of regular patients goes here
+    st.subheader("Regular Patient Sign Up")
+    st.write("Sign Up as a Regular Patient")
+
+    user_name = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    confirm_password = st.text_input("Confirm Password", type="password")
+
+    if st.button("Sign Up", key="regular_patient_register_button"):
+        # Check if any field is empty
+        if not user_name or not password or not confirm_password:
+            st.error("Please fill in all fields.")
+        # Check if the password and confirm password match
+        elif password != confirm_password:
+            st.error("Passwords do not match!")
+        else:
+            # Perform regular patient registration
+            # Your code for handling regular patient registration goes here
+            st.success("Regular Patient Registration Successful!")
+
+    pass
+
+# Define a function for handling registration of doctors
+def register_doctor():
+    # Your code for handling registration of doctors goes here
+    st.subheader("Doctor Sign Up")
+    st.write("Sign Up as a Doctor")
+
+    user_name = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    confirm_password = st.text_input("Confirm Password", type="password")
+
+    if st.button("Sign Up", key="doctor_register_button"):
+        # Check if any field is empty
+        if not user_name or not password or not confirm_password:
+            st.error("Please fill in all fields.")
+        # Check if the password and confirm password match
+        elif password != confirm_password:
+            st.error("Passwords do not match!")
+        else:
+            # Perform doctor registration
+            # Your code for handling doctor registration goes here
+            st.success("Doctor Registration Successful!")
+
+    pass
+
+# Define a function for handling registration of NGOs
+def register_ngo():
+    # Your code for handling registration of NGOs goes here
+    st.subheader("NGO Sign Up")
+    st.write("Sign Up as an NGO")
+
+    user_name = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    confirm_password = st.text_input("Confirm Password", type="password")
+
+    if st.button("Sign Up", key="ngo_register_button"):
+        # Check if any field is empty
+        if not user_name or not password or not confirm_password:
+            st.error("Please fill in all fields.")
+        # Check if the password and confirm password match
+        elif password != confirm_password:
+            st.error("Passwords do not match!")
+        else:
+            # Perform NGO registration
+            # Your code for handling NGO registration goes here
+            st.success("NGO Registration Successful!")
+    pass
 
 
 def main():
@@ -115,6 +185,20 @@ def show_register_page():
                 #time.sleep(2)  # Simulate processing time (remove this line in actual implementation)
                 st.success("Registration Successful! Click button again to continue")
                 st.session_state.register_completed = True
+
+def show_register_options():
+    st.subheader("Sign Up")
+    st.write("Choose the option that best describes you:")
+
+    register_options = ["Regular Patient", "Doctor", "NGO"]
+    selected_option = st.selectbox("Select Role", register_options)
+
+    if selected_option == "Regular Patient":
+        register_regular_patient()
+    elif selected_option == "Doctor":
+        register_doctor()
+    elif selected_option == "NGO":
+        register_ngo()
 
 def show_login_page():
     # Implement the login page here
