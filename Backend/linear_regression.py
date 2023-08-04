@@ -94,13 +94,4 @@ def PREDICT():
      }
     add_new_row_to_table(new_row_data, 'periodLog', conn,2)
 
-    # Optionally, you can print the new row DataFrame to check its contents
-
-  
-
-
-
-
-
-
-   
+    # Optionally, you can print the new row DataFrame to check its contents   
