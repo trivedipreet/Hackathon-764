@@ -6,15 +6,16 @@ from sklearn.linear_model import LinearRegression # To import the linear regress
 from sklearn.model_selection import train_test_split # To split the dataset into training and testing sets
 from sklearn.metrics import mean_squared_error
 from math import sqrt
+from datetime import datetime, timedelta
 import sqlite3
 
 if __name__ == '__main__':
     # Open synthetic dataset
     #df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
     
-    conn = sqlite3.connect('Rujuta/PeriodTracker.db') #database path
+    conn = sqlite3.connect('Backend\PeriodTracker.db') #database path
     cur = conn.cursor()
-    userid = 2
+    userid = 1
     query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {}".format(userid)
     df = pd.read_sql_query(query, conn)
     #print(df)
@@ -51,10 +52,29 @@ if __name__ == '__main__':
         cycle_length.append(output_pred[i][0])
         periods.append(output_pred[i][1])
 
+
     # Prediction one step ahead / new cycle
     prediction_one_step_ahead = model_LR.predict([test_x[-1]])
     cycles_numbers = np.arange(1, len(cycle_length) + 1)
+    # Calculate the predicted next cycle length
+    last_predicted_cycle_length = cycle_length[-1]
 
+    # Calculate the predicted next period start date
+    last_period_end_date = datetime.strptime(df['End'].iloc[-1], '%Y-%m-%d')
+    next_period_start_date = last_period_end_date + timedelta(days=last_predicted_cycle_length)
+
+    # Calculate the predicted next period end date
+    next_period_end_date = next_period_start_date + timedelta(days=periods[-1])
+
+    # Format and print the results
+    formatted_next_period_start_date = next_period_start_date.strftime('%Y-%m-%d')
+    formatted_next_period_end_date = next_period_end_date.strftime('%Y-%m-%d')
+
+    print("Predicted next period start date:", formatted_next_period_start_date)
+    print("Predicted next period end date:", formatted_next_period_end_date)
+
+
+    '''
     plt.figure(figsize=(4, 4))
     plt.rcParams.update({'font.size': 16})
 
@@ -69,8 +89,8 @@ if __name__ == '__main__':
     plt.ylabel('Days')
     plt.title('Linear Regression Model')
     fig = plt.gcf()
-    fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    #fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
+    #plt.show()
 
     error = abs(test_y - y_pred)
     plt.plot(error[:, 0], '-->', color='blue')
@@ -81,8 +101,8 @@ if __name__ == '__main__':
     plt.ylabel('Days')
     plt.title('Linear Regression Model')
     fig = plt.gcf()
-    fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    #fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
+    #plt.show()
 
     # Calculate RMSE (Root Mean Squared Error)
     rms = sqrt(mean_squared_error(test_y, y_pred))
@@ -90,4 +110,4 @@ if __name__ == '__main__':
 
     # Calculate MAE (Mean Absolute Error)
     mae = np.mean(np.abs((test_y - y_pred)))
-    print('MAE: ', mae)
+    print('MAE: ', mae)'''
