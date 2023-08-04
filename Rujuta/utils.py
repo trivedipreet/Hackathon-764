@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from random import randint
 from sklearn.model_selection import train_test_split
+from datetime import datetime
 
 def generate_synthetic_data(duration_cycle, start_day, year, start_month_index=1, number_of_cycle=5, period_duration=30, cycle_interval=[5, 6], period_interval=[26, 30]):
     """
@@ -58,7 +59,9 @@ def calculate_period_length(dates, dates_numbers):
     """
     period_length = []
     for index in range(0,dates_numbers):
-        period_length.append((dates.iloc[index]['End'] - dates.iloc[index]['Start']).days) 
+        start_date = datetime.strptime(dates.iloc[index]['Start'], '%Y-%m-%d').date()
+        end_date =  datetime.strptime(dates.iloc[index]['End'], '%Y-%m-%d').date()
+        period_length.append((end_date - start_date).days) 
     #print(period_length)
     return period_length
 
@@ -76,7 +79,9 @@ def calculate_cycle_length(dates, dates_numbers):
     """
     cycle_length = []
     for index in range(0,dates_numbers-1):
-        cycle_length.append((dates.iloc[index+1]['Start'] - dates.iloc[index]['Start']).days)
+        start_date = datetime.strptime(dates.iloc[index]['Start'], '%Y-%m-%d').date()
+        end_date =  datetime.strptime(dates.iloc[index+1]['Start'], '%Y-%m-%d').date()
+        cycle_length.append((end_date - start_date).days)
     #print(cycle_length)
     return cycle_length
 
@@ -97,7 +102,8 @@ def calculate_datatime(dataset):
     formatted_dataset=[]
     index=0
     for date_index in range(0,len(dataset)-1):
-        formatted_dataset.append([dataset.loc[date_index]['Start'].date(), cycle[index], period_length[index]])
+        start_date = datetime.strptime(dataset.iloc[date_index]['Start'], '%Y-%m-%d').date()
+        formatted_dataset.append([start_date, cycle[index], period_length[index]])
         index+=1
 
     return formatted_dataset
@@ -115,13 +121,14 @@ def prepared_the_features(periods):
         features (np.array): array with the features
         labels (np.array): array with the labels
     """
-
+    #print(periods)
     features = []
     labels = []
-    for period in periods[:-3]:
-        p_index = periods.index(period)
+    
+    for index in periods[:-3]:
+        p_index = periods.index(index)
         features.append([])
-        features[-1].append([period[-2], period[-1]])
+        features[-1].append([index[-2], index[-1]])
         features[-1].append([periods[p_index + 1][-2], periods[p_index + 1][-1]])
         features[-1].append([periods[p_index + 2][-2], periods[p_index + 2][-1]])
         labels.append([periods[p_index + 3][-2], periods[p_index + 3][-1]])
@@ -144,68 +151,3 @@ def generate_final_features(dataset):
     dataset_with_datatime = calculate_datatime(dataset)
 
     return prepared_the_features(dataset_with_datatime)
-
-def split_dataset(features, labels, test_size=0.2, random_state=0, reshape=True): 
-    """
-    function that split the dataset
-
-    Args:
-        features (np.array): array with the features
-        labels (np.array): array with the labels
-        test_size (float): percentage of the test size
-        random_state (int): random state
-
-    Returns:
-        train_features (np.array): array with the train features
-        test_features (np.array): array with the test features
-        train_labels (np.array): array with the train labels
-        test_labels (np.array): array with the test labels
-    """
-
-    
-    train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=test_size, random_state=random_state)
-    train_features = np.array(train_features)
-    test_features = np.array(test_features)
-    train_labels = np.array(train_labels)
-    test_labels = np.array(test_labels)
-    if reshape:
-        train_features = train_features.reshape(train_features.shape[0], train_features.shape[1]*train_features.shape[2])
-        test_features = test_features.reshape(test_features.shape[0], test_features.shape[1]*test_features.shape[2])
-        train_labels = train_labels.reshape(train_labels.shape[0], train_labels.shape[1]*1)
-        test_labels = test_labels.reshape(test_labels.shape[0], test_labels.shape[1]*1)
-
-    return train_features, test_features, train_labels, test_labels
-
-def create_dataset(dataset, look_back=1):
-    """ 
-        This function is used to create dataset for LSTM model
-        Args:
-            dataset: The dataset
-            look_back: The number of previous time steps to use as input variables to predict the next time period
-        Returns:
-            dataX: The input data
-            dataY: The output data
-    """
-    dataX, dataY = [], []
-    for i in range(len(dataset)-look_back-1):
-        a = dataset[i:(i+look_back), 0]
-        dataX.append(a)
-        dataY.append(dataset[i + look_back, 0])
-    return np.array(dataX), np.array(dataY)
-
-
-def convet2dataframe(data, columns):
-    """
-    function that convert the data to dataframe
-
-    Args:
-        data (np.array): array with the data
-        columns (list): list with the columns
-
-    Returns:
-
-    """
-    data = data.reshape(1,-1,2)
-    data_frame = pd.DataFrame(data[0], columns=columns)
-    data_frame['time'] = data_frame.index
-    return data_frame

@@ -17,16 +17,19 @@ cur.execute("""CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCRE
 cur.execute("""CREATE TABLE IF NOT EXISTS periodLog(id INTEGER REFERENCES user(id), 
         start DATE,
         end DATE)""")
+
+'''
+#run these commented commands ONLY ONCE
 cur.execute("""INSERT INTO user(name, age, gender, region, email, password) VALUES("User1", 20, 'F', "Pune", "test", "test")""")
 cur.execute("""INSERT INTO user(name, age, gender, region, email, password) VALUES("User2", 21, 'F', "Pune", "test2", "test2")""")
 
-#excel to sql:
-periodData = pd.read_excel('SyntheticData.xlsx', header=0)  
-periodData.to_sql('periodLog', conn, if_exists='append', index=False)
-periodData = pd.read_excel('RegularCycle.xlsx', header=0)  
-periodData.to_sql('periodLog', conn, if_exists='append', index=False)
 
-#adding userid
+#excel to sql:
+periodData = pd.read_excel('Rujuta/SyntheticData.xlsx', header=0)  
+periodData.to_sql('periodLog', conn, if_exists='append', index=False)
+periodData = pd.read_excel('Rujuta/RegularCycle.xlsx', header=0)  
+periodData.to_sql('periodLog', conn, if_exists='append', index=False)
+'''
 
 conn.commit()
 

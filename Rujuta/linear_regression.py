@@ -1,5 +1,3 @@
-import sys
-
 import utils
 import numpy as np # For working with arrays
 import pandas as pd
@@ -8,17 +6,27 @@ from sklearn.linear_model import LinearRegression # To import the linear regress
 from sklearn.model_selection import train_test_split # To split the dataset into training and testing sets
 from sklearn.metrics import mean_squared_error
 from math import sqrt
+import sqlite3
 
 if __name__ == '__main__':
     # Open synthetic dataset
-    df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
-
+    #df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
+    
+    conn = sqlite3.connect('Rujuta/PeriodTracker.db') #database path
+    cur = conn.cursor()
+    userid = 2
+    query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {}".format(userid)
+    df = pd.read_sql_query(query, conn)
+    #print(df)
     # Prepare data for linear regression/machine learning model
+    
     periods_data = utils.calculate_datatime(df)
     #print(periods_data)
     
     features, labels = utils.generate_final_features(df)
-'''
+    #print(features)
+    #print(labels)
+
     x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=10)
     # Reshape data for linear regression/machine learning model
     train_y = np.array(y_train)
@@ -62,7 +70,7 @@ if __name__ == '__main__':
     plt.title('Linear Regression Model')
     fig = plt.gcf()
     fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
-    #plt.show()
+    plt.show()
 
     error = abs(test_y - y_pred)
     plt.plot(error[:, 0], '-->', color='blue')
@@ -74,7 +82,7 @@ if __name__ == '__main__':
     plt.title('Linear Regression Model')
     fig = plt.gcf()
     fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
-    #plt.show()
+    plt.show()
 
     # Calculate RMSE (Root Mean Squared Error)
     rms = sqrt(mean_squared_error(test_y, y_pred))
@@ -83,4 +91,3 @@ if __name__ == '__main__':
     # Calculate MAE (Mean Absolute Error)
     mae = np.mean(np.abs((test_y - y_pred)))
     print('MAE: ', mae)
-'''
