@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # Open synthetic dataset
     #df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
     
-    conn = sqlite3.connect('Rujuta/PeriodTracker.db') #database path
+    conn = sqlite3.connect('d:\Hackathon-764\Rujuta\PeriodTracker.db') #database path
     cur = conn.cursor()
     userid = 2
     query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {}".format(userid)
@@ -69,8 +69,8 @@ if __name__ == '__main__':
     plt.ylabel('Days')
     plt.title('Linear Regression Model')
     fig = plt.gcf()
-    fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    #fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
+    #plt.show()
 
     error = abs(test_y - y_pred)
     plt.plot(error[:, 0], '-->', color='blue')
@@ -81,8 +81,8 @@ if __name__ == '__main__':
     plt.ylabel('Days')
     plt.title('Linear Regression Model')
     fig = plt.gcf()
-    fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    #fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
+    #plt.show()
 
     # Calculate RMSE (Root Mean Squared Error)
     rms = sqrt(mean_squared_error(test_y, y_pred))
