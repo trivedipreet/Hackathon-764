@@ -58,23 +58,35 @@ def PREDICT():
     # Prediction one step ahead / new cycle
     prediction_one_step_ahead = model_LR.predict([test_x[-1]])
     cycles_numbers = np.arange(1, len(cycle_length) + 1)
-    # Calculate the predicted next cycle length
-    last_predicted_cycle_length = cycle_length[-1]
+
+    last_predicted_cycle_length = cycle_length[0]
+    last_predicted_cycle_length_2=cycle_length[0]+cycle_length[1]
+    last_predicted_cycle_length_3=cycle_length[0]+cycle_length[1]+cycle_length[2]
+
 
     # Calculate the predicted next period start date
-    last_period_end_date = datetime.strptime(df['End'].iloc[-1], '%Y-%m-%d')
-    next_period_start_date = last_period_end_date + timedelta(days=last_predicted_cycle_length)
+    last_period_start_date = datetime.strptime(df['Start'].iloc[-1], '%Y-%m-%d')
+    next_period_start_date = last_period_start_date + timedelta(days=last_predicted_cycle_length)
+    next_period_start_date_2=last_period_start_date + timedelta(days=last_predicted_cycle_length_2)
+    next_period_start_date_3=last_period_start_date + timedelta(days=last_predicted_cycle_length_3)
 
     # Calculate the predicted next period end date
-    next_period_end_date = next_period_start_date + timedelta(days=periods[-1])
+    next_period_end_date = next_period_start_date + timedelta(days=periods[0])
+    next_period_end_date_2 = next_period_start_date_2 + timedelta(days=periods[1])
+    next_period_end_date_3 = next_period_start_date_3 + timedelta(days=periods[2])
+
 
     # Format and print the results
     formatted_next_period_start_date = next_period_start_date.strftime('%Y-%m-%d')
     formatted_next_period_end_date = next_period_end_date.strftime('%Y-%m-%d')
+    formatted_next_period_start_date_2 = next_period_start_date_2.strftime('%Y-%m-%d')
+    formatted_next_period_end_date_2 = next_period_end_date_2.strftime('%Y-%m-%d')
+    formatted_next_period_start_date_3 = next_period_start_date_3.strftime('%Y-%m-%d')
+    formatted_next_period_end_date_3 = next_period_end_date_3.strftime('%Y-%m-%d')
 
     print("Predicted next period start date:", formatted_next_period_start_date)
     print("Predicted next period end date:", formatted_next_period_end_date)
-
+    
     #Calculate irregularities
     print("Actual Date?")
     day = input("Day: ")
@@ -94,13 +106,8 @@ def PREDICT():
      }
     add_new_row_to_table(new_row_data, 'periodLog', conn,2)
 
-    # Optionally, you can print the new row DataFrame to check its contents
-
-  
-
-
-
-
-
-
-   
+    # Optionally, you can print the new row DataFrame to check its contents   
+    print("Predicted cycle-2 period start date:", formatted_next_period_start_date_2)
+    print("Predicted cycle-2 period end date:", formatted_next_period_end_date_2)
+    print("Predicted cycle-3 period start date:", formatted_next_period_start_date_3)
+    print("Predicted cycle-3 period end date:", formatted_next_period_end_date_3)
