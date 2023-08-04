@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from random import randint
 from sklearn.model_selection import train_test_split
-
+#tfgvjh
 
 def calculate_period_length(dates, dates_numbers):
     """
