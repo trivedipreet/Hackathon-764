@@ -1,7 +1,25 @@
 import streamlit as st
 import time
+import gettext
+import os
+import locale
+locale.setlocale(locale.LC_ALL, '')  # Set the default locale
+
+def load_translations(lang):
+    localedir = os.path.join(os.path.dirname(__file__), 'locales')
+    translation = gettext.translation('messages', localedir=localedir, languages=[lang])
+    translation.install()
+    return translation
+
+
 
 def main():
+    lang = st.selectbox("Select Language", ["English", "Hindi"])
+    if lang == "Hindi":
+        _ = load_translations('hi')
+    else:
+        _ = load_translations('en')
+
     st.markdown(
         """
         <style>
@@ -27,6 +45,7 @@ def main():
     )
 
     st.title("Menstrual Health Tracker")
+    
 
     # Initialize st.session_state.started if not already set
     if 'started' not in st.session_state:
@@ -133,7 +152,7 @@ def show_home_tab():
         st.write("This is the Calendar.")
     elif selected_option == "History":
         # Display History content here
-        st.title("History")
+        st.title(_("History"))
         st.write("This is the History.")
     elif selected_option == "Help":
         # Display Help content here
