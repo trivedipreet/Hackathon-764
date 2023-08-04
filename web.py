@@ -1,15 +1,15 @@
 import streamlit as st
 import time
-import gettext
+#import gettext
 import os
 import locale
 locale.setlocale(locale.LC_ALL, '')  # Set the default locale
 
-def load_translations(lang):
+'''def load_translations(lang):
     localedir = os.path.join(os.path.dirname(__file__), 'locales')
     translation = gettext.translation('messages', localedir=localedir, languages=[lang])
     translation.install()
-    return translation
+    return translation'''
 
 # Define a function for handling registration of regular patients
 def register_regular_patient():
@@ -84,11 +84,11 @@ def register_ngo():
 
 
 def main():
-    lang = st.selectbox("Select Language", ["English", "Hindi"])
+    '''lang = st.selectbox("Select Language", ["English", "Hindi"])
     if lang == "Hindi":
         _ = load_translations('hi')
     else:
-        _ = load_translations('en')
+        _ = load_translations('en')'''
 
     st.markdown(
         """
@@ -236,7 +236,7 @@ def show_home_tab():
         st.write("This is the Calendar.")
     elif selected_option == "History":
         # Display History content here
-        st.title(_("History"))
+        st.title("History")
         st.write("This is the History.")
     elif selected_option == "Help":
         # Display Help content here
