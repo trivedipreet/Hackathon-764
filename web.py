@@ -32,11 +32,12 @@ def main():
     if 'started' not in st.session_state:
         st.session_state.started = False
 
-    # Check if the user has clicked "Get Started"
     if not st.session_state.started:
         show_get_started_popup()
-    else:
-        show_home_page()
+    elif not st.session_state.register_completed and not st.session_state.login_completed:
+        show_tabs()
+    elif st.session_state.register_completed or st.session_state.login_completed:
+        show_home_tab()
 
 def show_get_started_popup():
     greetings = ["Hello", "नमस्ते", "નમસ્તે", "வணக்கம்", "ಹಲೋ", "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", "ନମସ୍କାର"]
@@ -46,43 +47,116 @@ def show_get_started_popup():
     # Create "Get Started" button with a unique key
     get_started_button = st.button("Get Started", key="get_started_button")
 
-    # Infinite loop to create a continuous loop of greetings
-    while not st.session_state.started:  # Exit the loop when the button is clicked
-        for greeting in greetings:
-            if st.session_state.started:
-                break  # Exit the loop if "Get Started" button is clicked
-            greeting_placeholder.markdown(f"<h1 class='center greeting-container' style='font-size: 60px;'>{greeting}</h1>", unsafe_allow_html=True)
-            time.sleep(1)  # Faster transition between greetings
-            greeting_placeholder.empty()  # Clear the previous greeting before displaying the next
+    if get_started_button:  # Check if the button is clicked
+        st.session_state.started = True  # Set the flag to True when the button is clicked
+        st.session_state.register_completed = False  # Reset register_completed flag
+        st.session_state.login_completed = False  # Reset login_completed flag
+        show_tabs()
 
-    # When "Get Started" button is clicked, show the register page
-    show_register_page()
+    # Simulate continuous loop of greetings
+    for greeting in greetings:
+        if st.session_state.started:
+            break  # Exit the loop if "Get Started" button is clicked
+        greeting_placeholder.markdown(f"<h1 class='center greeting-container' style='font-size: 60px;'>{greeting}</h1>", unsafe_allow_html=True)
+        time.sleep(1)  # Faster transition between greetings
+        greeting_placeholder.empty()  # Clear the previous greeting before displaying the next
 
-def show_home_page():
-    st.subheader("Home Page")
-    st.write("Welcome to the Home Page!")
-    
-    # Show buttons for Sign Up and Sign In with unique keys
-    if st.button("Sign Up", key="sign_up_button"):
+def show_tabs():
+    st.subheader("Welcome!")
+    st.write("Create an Account or Log In to Existing Account")
+
+    tabs = ["Sign Up", "Sign In"]
+    selected_tab = st.selectbox("Sign Up/Sign In", tabs)
+
+    if selected_tab == "Sign Up":
         show_register_page()
-    if st.button("Sign In", key="sign_in_button"):
+    elif selected_tab == "Sign In":
         show_login_page()
 
 def show_register_page():
-    st.subheader("Register Page")
-    st.write("This is the Registration Page.")
+    st.subheader("Sign Up")
+    st.write("Sign Up if you do not already have an account")
     
     # Add the registration form here
     user_name = st.text_input("Username")
     password = st.text_input("Password", type="password")
     confirm_password = st.text_input("Confirm Password", type="password")
 
-    if st.button("Register"):
-        # Show a spinner while processing the registration
-        with st.spinner("Processing..."):
-            # Validate and process the registration form here
-            time.sleep(2)  # Simulate processing time (remove this line in actual implementation)
-            st.success("Registration Successful!")
+    if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
+        # Check if any field is empty
+        if not user_name or not password or not confirm_password:
+            st.error("Please fill in all fields.")
+        # Check if the password and confirm password match
+        elif password != confirm_password:
+            st.error("Passwords do not match!")
+        else:
+            # Show a spinner while processing the registration
+            with st.spinner("Processing..."):
+                # Validate and process the registration form here
+                #time.sleep(2)  # Simulate processing time (remove this line in actual implementation)
+                st.success("Registration Successful! Click button again to continue")
+                st.session_state.register_completed = True
+
+def show_login_page():
+    # Implement the login page here
+    st.subheader("Sign In")
+    st.write("Sign In if you already have an account:")
+    user_name2 = st.text_input("Username")
+    password2 = st.text_input("Password", type="password")
+
+    if st.button("Sign In", key="signin_button"):  # Add a unique key to the "Register" button
+        # Check if any field is empty
+        if not user_name2 or not password2:
+            st.error("Please fill in all fields.")
+        else:
+            # Show a spinner while processing the login
+            with st.spinner("Processing..."):
+                # Validate and process the login form here
+                #time.sleep(2)  # Simulate processing time (remove this line in actual implementation)
+                st.success("Account Exists! Click button again to continue")
+                st.session_state.login_completed = True
+
+def show_home_tab():
+    # Implement the Home tab here
+
+    # Add the hamburger menu with options
+    menu_options = ["Dashboard", "Calendar", "History", "Help", "Contact", "Announcements", "Settings", "Log out"]
+    selected_option = st.sidebar.radio("Menu", menu_options)
+
+    if selected_option == "Dashboard":
+        # Display Dashboard content here
+        st.title("Dashboard")
+        st.write("This is the Dashboard.")
+    elif selected_option == "Calendar":
+        # Display Calendar content here
+        st.title("Calendar")
+        st.write("This is the Calendar.")
+    elif selected_option == "History":
+        # Display History content here
+        st.title("History")
+        st.write("This is the History.")
+    elif selected_option == "Help":
+        # Display Help content here
+        st.title("Help")
+        st.write("This is the Help page.")
+    elif selected_option == "Contact":
+        # Display Contact content here
+        st.title("Contact")
+        st.write("This is the Contact page.")
+    elif selected_option == "Announcements":
+        # Display Announcements content here
+        st.title("Announcements")
+        st.write("This is the Announcements page.")
+    elif selected_option == "Settings":
+        # Display Settings content here
+        st.title("Settings")
+        st.write("This is the Settings page.")
+    elif selected_option == "Log out":
+        # Log out and reset the session state
+        st.session_state.started = False
+        st.session_state.register_completed = False
+        st.session_state.login_completed = False
+        st.write("You have been logged out. Click 'Get Started' to sign in or sign up again.")
 
 if __name__ == "__main__":
     main()
