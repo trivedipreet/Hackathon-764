@@ -12,9 +12,9 @@ if __name__ == '__main__':
     # Open synthetic dataset
     #df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
     
-    conn = sqlite3.connect('d:\Hackathon-764\Rujuta\PeriodTracker.db') #database path
+    conn = sqlite3.connect('Rujuta\PeriodTracker.db') #database path
     cur = conn.cursor()
-    userid = 2
+    userid = 1
     query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {}".format(userid)
     df = pd.read_sql_query(query, conn)
     #print(df)
@@ -51,10 +51,12 @@ if __name__ == '__main__':
         cycle_length.append(output_pred[i][0])
         periods.append(output_pred[i][1])
 
+
     # Prediction one step ahead / new cycle
     prediction_one_step_ahead = model_LR.predict([test_x[-1]])
     cycles_numbers = np.arange(1, len(cycle_length) + 1)
 
+    '''
     plt.figure(figsize=(4, 4))
     plt.rcParams.update({'font.size': 16})
 
@@ -83,7 +85,7 @@ if __name__ == '__main__':
     fig = plt.gcf()
     #fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
     #plt.show()
-
+'''
     # Calculate RMSE (Root Mean Squared Error)
     rms = sqrt(mean_squared_error(test_y, y_pred))
     print('RMSE: ', rms)
