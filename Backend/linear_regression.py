@@ -12,8 +12,13 @@ from operations import add_new_row_to_table
 
 
 
+
+
+
+
+
 def PREDICT():
- with sqlite3.connect('Backend\PeriodTracker.db') as conn:
+ with sqlite3.connect('PeriodTracker.db') as conn:
     
     #conn = sqlite3.connect('PeriodTracker.db') #database path
     cur = conn.cursor()
@@ -55,28 +60,33 @@ def PREDICT():
         periods.append(output_pred[i][1])
 
 
-    # Prediction one step ahead / new cycle
-    prediction_one_step_ahead = model_LR.predict([test_x[-1]])
+    # # Prediction one step ahead / new cycle
+     #prediction_one_step_ahead = model_LR.predict([test_x[-1]])
     cycles_numbers = np.arange(1, len(cycle_length) + 1)
+       # Calculate the predicted next cycle length
+
 
     last_predicted_cycle_length = cycle_length[0]
     last_predicted_cycle_length_2=cycle_length[0]+cycle_length[1]
     last_predicted_cycle_length_3=cycle_length[0]+cycle_length[1]+cycle_length[2]
 
 
-    # Calculate the predicted next period start date
+     # Calculate the predicted next period start date
+    last_period_end_date = datetime.strptime(df['End'].iloc[-1], '%Y-%m-%d')
+    next_period_start_date = last_period_end_date + timedelta(days=last_predicted_cycle_length)
     last_period_start_date = datetime.strptime(df['Start'].iloc[-1], '%Y-%m-%d')
     next_period_start_date = last_period_start_date + timedelta(days=last_predicted_cycle_length)
     next_period_start_date_2=last_period_start_date + timedelta(days=last_predicted_cycle_length_2)
     next_period_start_date_3=last_period_start_date + timedelta(days=last_predicted_cycle_length_3)
 
-    # Calculate the predicted next period end date
+     # Calculate the predicted next period end date
+    next_period_end_date = next_period_start_date + timedelta(days=periods[-1])
     next_period_end_date = next_period_start_date + timedelta(days=periods[0])
     next_period_end_date_2 = next_period_start_date_2 + timedelta(days=periods[1])
     next_period_end_date_3 = next_period_start_date_3 + timedelta(days=periods[2])
 
 
-    # Format and print the results
+     # Format and print the results
     formatted_next_period_start_date = next_period_start_date.strftime('%Y-%m-%d')
     formatted_next_period_end_date = next_period_end_date.strftime('%Y-%m-%d')
     formatted_next_period_start_date_2 = next_period_start_date_2.strftime('%Y-%m-%d')
@@ -86,35 +96,107 @@ def PREDICT():
 
     print("Predicted next period start date:", formatted_next_period_start_date)
     print("Predicted next period end date:", formatted_next_period_end_date)
-    
-    #Calculate irregularities
-    print("Actual Date?")
-    day = input("Day: ")
-    month = int(input("Month: "))
-    year = input("Year: ")
-    ActualDate = f"{year}-{month}-{day} 00:00:00"
-    actual_date_obj = datetime.strptime(ActualDate, "%Y-%m-%d %H:%M:%S")
 
-    Errorval = abs(next_period_start_date - actual_date_obj)
-
-    print("Error Value:", Errorval)
-
-    new_row_data = {
-     'start': actual_date_obj,
-     'end': '2020-10-09'
-     # Add more columns and their values as needed
-     }
-    add_new_row_to_table(new_row_data, 'periodLog', conn,2)
-
-    # Optionally, you can print the new row DataFrame to check its contents   
+     
     print("Predicted cycle-2 period start date:", formatted_next_period_start_date_2)
     print("Predicted cycle-2 period end date:", formatted_next_period_end_date_2)
     print("Predicted cycle-3 period start date:", formatted_next_period_start_date_3)
-    print("Predicted cycle-3 period end date:", formatted_next_period_end_date_3)
+    print("Predicted cycle-3 period end date:", formatted_next_period_end_date_3) 
+    # # Calculate the predicted next cycle length
+    # last_predicted_cycle_length = cycle_length[-1]
+
+    # # Calculate the predicted next period start date
+    # last_period_end_date = datetime.strptime(df['End'].iloc[-1], '%Y-%m-%d')
+    # next_period_start_date = last_period_end_date + timedelta(days=last_predicted_cycle_length)
+
+    # # Calculate the predicted next period end date
+    # next_period_end_date = next_period_start_date + timedelta(days=periods[-1])
+
+    # # Format and print the results
+    # formatted_next_period_start_date = next_period_start_date.strftime('%Y-%m-%d')
+    # formatted_next_period_end_date = next_period_end_date.strftime('%Y-%m-%d')
+
+    # print("Predicted next period start date:", formatted_next_period_start_date)
+    # print("Predicted next period end date:", formatted_next_period_end_date)
+
+
+    '''
+    plt.figure(figsize=(4, 4))
+    plt.rcParams.update({'font.size': 16})
+
+    plt.plot(cycle_length, '-->', color='blue')
+    plt.plot(periods, '-*', color='green')
+    plt.plot(test_y, ':o', color='red')
+    plt.plot(cycles_numbers[-1], prediction_one_step_ahead[0][0], '-->', color='blue')
+    plt.plot(cycles_numbers[-1], prediction_one_step_ahead[0][1], '-*', color='green')
+    plt.legend(['Cycle Duration (Predicted)', 'Period Variation (Predicted)', 'Real Data'])
+    plt.grid()
+    plt.xlabel('Cycles')
+    plt.ylabel('Days')
+    plt.title('Linear Regression Model')
+    fig = plt.gcf()
+    #fig.savefig('Rujuta/linear.png', dpi=300, bbox_inches='tight')
+    #plt.show()
+
+    error = abs(test_y - y_pred)
+    plt.plot(error[:, 0], '-->', color='blue')
+    plt.plot(error[:, 1], '-*', color='green')
+    plt.legend(['Cycle Error', 'Period Error'])
+    plt.grid()
+    plt.xlabel('Cycles')
+    plt.ylabel('Days')
+    plt.title('Linear Regression Model')
+    fig = plt.gcf()
+    #fig.savefig('Rujuta/linear_error.png', dpi=300, bbox_inches='tight')
+    #plt.show()
+
+    # Calculate RMSE (Root Mean Squared Error)
+    rms = sqrt(mean_squared_error(test_y, y_pred))
+    print('RMSE: ', rms)
+
+    # Calculate MAE (Mean Absolute Error)
+    mae = np.mean(np.abs((test_y - y_pred)))
+    print('MAE: ', mae)'''
+
+
+    #Calculate irregularities
+     # Get the current year
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+    endmonth = current_month
+    print("Start Date?")
+    daystart = input("Day: ")
+    print("End Date?")
+    dayend = input("Day: ")
+    if current_month == 12:
+      endmonth = int(input("Month: "))
     
-    
-    def lateperiod(forgottoenter):
+   
+    ActualDateSTART = f"{current_year}-0{current_month}-{daystart} "
+    ActualDateEND = f"{current_year}-0{endmonth}-{dayend} "
+    start_date_obj = datetime.strptime(ActualDateSTART, "%Y-%m-%d ")
+
+    Errorval = abs(next_period_start_date - start_date_obj)
+    ErrorvalINT = Errorval.total_seconds() / (60 * 60 * 24)
+     
+
+    print("Error Value:", Errorval)
+   
+ 
+    if ErrorvalINT < 10:
+     
        
+      new_row_data = {
+      'start': ActualDateSTART,
+      'end': ActualDateEND
+      # Add more columns and their values as needed
+      }
+      add_new_row_to_table(new_row_data, 'periodLog', conn,2)
+
+     # Optionally, you can print the new row DataFrame to check its contents
+    else:
+     #QUESTIONS AND FORGOT?
+     def lateperiod(forgottoenter):
        if forgottoenter:
          current_date = datetime.now().date()
          predstart1 = datetime.strptime(formatted_next_period_start_date, "%Y-%m-%d").date()
@@ -122,25 +204,26 @@ def PREDICT():
          predstart3 = datetime.strptime(formatted_next_period_start_date_3, "%Y-%m-%d").date()
         
          if predstart1 < current_date:
-                 d1 = {'start': formatted_next_period_start_date,
+             d1 = {'start': formatted_next_period_start_date,
                     'end': formatted_next_period_end_date}
-                 add_new_row_to_table(d1, 'periodLog', conn,2)
+             add_new_row_to_table(d1, 'periodLog', conn,2)
          if predstart2 < current_date:
-                 d2 = {'start': formatted_next_period_start_date_2,
+             d2 = {'start': formatted_next_period_start_date_2,
                     'end': formatted_next_period_end_date_2 }
-                 add_new_row_to_table(d2, 'periodLog', conn,2)
+             add_new_row_to_table(d2, 'periodLog', conn,2)
          if predstart3 < current_date:
-                 d3 = {'start': formatted_next_period_start_date_3,
+             d3 = {'start': formatted_next_period_start_date_3,
                     'end': formatted_next_period_end_date_3 }
-                 add_new_row_to_table(d3, 'periodLog', conn,2)
+             add_new_row_to_table(d3, 'periodLog', conn,2)
              
-             
+
+
+
+  
+
 
 
 
 
 
    
-        
-        
-        
