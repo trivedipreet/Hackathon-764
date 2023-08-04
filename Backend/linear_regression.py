@@ -18,7 +18,7 @@ from operations import add_new_row_to_table
 
 
 def PREDICT():
- with sqlite3.connect('PeriodTracker.db') as conn:
+ with sqlite3.connect('Backend\PeriodTracker.db') as conn:
     
     #conn = sqlite3.connect('PeriodTracker.db') #database path
     cur = conn.cursor()
