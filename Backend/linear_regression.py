@@ -8,12 +8,14 @@ from sklearn.metrics import mean_squared_error
 from math import sqrt
 from datetime import datetime, timedelta
 import sqlite3
+from operations import add_new_row_to_table
 
-if __name__ == '__main__':
-    # Open synthetic dataset
-    #df = pd.read_excel('Rujuta/SyntheticData.xlsx', usecols = [1,2])
+
+
+def PREDICT():
+ with sqlite3.connect('BackendPeriodTracker.db') as conn:
     
-    conn = sqlite3.connect('Backend\PeriodTracker.db') #database path
+    #conn = sqlite3.connect('PeriodTracker.db') #database path
     cur = conn.cursor()
     userid = 1
     query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {}".format(userid)
@@ -111,3 +113,34 @@ if __name__ == '__main__':
     # Calculate MAE (Mean Absolute Error)
     mae = np.mean(np.abs((test_y - y_pred)))
     print('MAE: ', mae)'''
+
+
+    #Calculate irregularities
+    print("Actual Date?")
+    day = input("Day: ")
+    month = int(input("Month: "))
+    year = input("Year: ")
+    ActualDate = f"{year}-{month}-{day} 00:00:00"
+    actual_date_obj = datetime.strptime(ActualDate, "%Y-%m-%d %H:%M:%S")
+
+    Errorval = abs(next_period_start_date - actual_date_obj)
+
+    print("Error Value:", Errorval)
+
+    new_row_data = {
+     'start': actual_date_obj,
+     'end': '2020-10-09'
+     # Add more columns and their values as needed
+     }
+    add_new_row_to_table(new_row_data, 'periodLog', conn,2)
+
+    # Optionally, you can print the new row DataFrame to check its contents
+
+  
+
+
+
+
+
+
+   
