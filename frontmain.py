@@ -291,7 +291,7 @@ def show_home_tab():
     # Implement the Home tab here
 
     # Add the hamburger menu with options
-    menu_options = ["Dashboard", "Calendar", "History", "Help", "Contact", "Announcements", "Settings", "Log out"]
+    menu_options = ["Dashboard", "Calendar", "History", "Contact", "Announcements", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
     if 'start_date' not in st.session_state:
         st.session_state.start_date = datetime.date.today()
@@ -302,10 +302,9 @@ def show_home_tab():
     if selected_option == "Dashboard":
         # Display Dashboard content here
         st.title("Dashboard")
+        st.title("Your Period is expected to arrive in X days.")
         st.write("This is your Dashboard.")
-        start_date = st.date_input("Start Date", datetime.date.today())
-        end_date = st.date_input("End Date", datetime.date.today())
-
+        
         # Drop-down for Symptoms
         st.subheader("Symptoms")
         selected_symptoms = st.multiselect(
@@ -534,23 +533,32 @@ def show_home_tab():
         
     elif selected_option == "History":
         # Display History content here
-        st.title("History") ##
+        st.title(("History"))
         st.write("This is the History.")
     
     elif selected_option == "Contact":
         # Display Contact content here
-        st.title("Contact")
-        st.write("This is the Contact page.")
+        st.title("Contact your Nearest Doctor: ")
+        st.title("Contact your Nearest NGO: ")
+        st.title("Contact for site help: ")
+        st.write("rujutabudke@gmail.com")
+        st.write("aaryakkw@gmail.com")
+        st.write("trivedipreet@gmail.com")
+        st.write("nazrera21.comp@coeptech.ac.in")
+        st.write("joshits21.comp@coep.ac.in")
+        st.write("shreyabhatkhande@gmail.com")
     elif selected_option == "Announcements":
         # Display Announcements content here
         st.title("Announcements")
         st.write("This is the Announcements page.")
     elif selected_option == "Log out":
-        # Log out and reset the session state
-        st.session_state.started = False
-        st.session_state.register_completed = False
-        st.session_state.login_completed = False
-        st.write("You have been logged out. Click 'Get Started' to sign in or sign up again.")
+        logout_button = st.button("Log out")
+        if logout_button:
+            # Log out and reset the session state
+            st.session_state.started = False
+            st.session_state.register_completed = False
+            st.session_state.login_completed = False
+            st.write("You have been logged out. Click again to confirm Log Out")
 
 if __name__ == "__main__":
     main()
