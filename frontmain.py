@@ -12,7 +12,8 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import pandas as pd
-
+from region_rec import regions
+from region_rec import update_visit
 import random
 
 
@@ -20,16 +21,16 @@ import random
 #global user_role
 user_role = None
 
-'''def load_translations(lang):
-    #localedir = os.path.join(os.path.dirname(__file__), 'locales')
-    # Get the absolute path of the current script
-    #script_path = os.path.abspath(__file__)
-    # Construct the absolute path of the 'locales' directory based on the script path
-    localedir = os.path.join(os.path.dirname(script_path), 'locales')
+#def load_translations(lang):
+#localedir = os.path.join(os.path.dirname(__file__), 'locales')
+# Get the absolute path of the current script
+#script_path = os.path.abspath(__file__)
+# Construct the absolute path of the 'locales' directory based on the script path
+#localedir = os.path.join(os.path.dirname(script_path), 'locales')
 
-    translation = gettext.translation('messages', localedir=localedir, languages=[lang])
-    translation.install()
-    return translation'''
+#translation = gettext.translation('messages', localedir=localedir, languages=[lang])
+#translation.install()
+#return translation'''
 
 
 
@@ -187,21 +188,22 @@ def check_user_credentials(username, password):
     hashed_password = hash_password(password)
 
     # Check if the username and hashed password exist in the database
-    query = "SELECT name FROM user WHERE name=? AND password=?"
+    query = "SELECT * FROM user WHERE name=? AND password=?"
     cursor.execute(query, (username, hashed_password))
     result = cursor.fetchone()
 
     conn.close()
     if result:
         # Extract the 'id' from the fetched row and store it in a variable
-        id = result[0] 
-        st.session_state.id = id # Assuming the 'id' column is the first one in the table
-        return id
+        userid = result[0] 
+        st.session_state.id = userid # Assuming the 'id' column is the first one in the table
+        return userid
     else:
         return None
 
+#FUNCTION CHANGED BY RUJUTA
 # Helper function to insert user data into the database
-def insert_user_data(username, password, age, gender, contact=''):
+def insert_user_data(username, password, age, gender, region, contact=''):
     # Connect to the SQLite database
     conn = sqlite3.connect('PeriodTracker.db')
     cursor = conn.cursor()
@@ -211,10 +213,10 @@ def insert_user_data(username, password, age, gender, contact=''):
     uid = "U"+str(random.randint(1000,9999))
 
     # Insert user data into the 'user' table
-    query = "INSERT INTO user (id, name, password, age, gender, contact) VALUES (? ,?, ?, ?, ?, ?)"
-    cursor.execute(query, (uid, username, hashed_password, age, gender, contact))
+    query = "INSERT INTO user (id, name, password, age, gender, region, contact) VALUES (? ,?, ?, ?, ?, ?, ?)"
+    cursor.execute(query, (uid, username, hashed_password, age, gender, region, contact))
 
-    st.session_state.id = id
+    st.session_state.id = uid
 
     conn.commit()
     conn.close()
@@ -257,7 +259,7 @@ def Button():
     # st.write("Selected Town:", selected_town)
     return selected_town
 
-
+#FUNCTION CHANGED BY RUJUTA
 def show_user_register_page():
     st.subheader("Sign Up")
     st.write("Sign Up if you do not already have an account")
@@ -276,7 +278,7 @@ def show_user_register_page():
 
     if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
-        if not user_name or not password or not confirm_password or not age or not gender:
+        if not user_name or not password or not confirm_password or not age or not gender or not region:
             st.error("Please fill in all required fields.")
         # Check if the password and confirm passw
         # ord match
@@ -284,7 +286,7 @@ def show_user_register_page():
             st.error("Passwords do not match!")
         else:
             # Process the registration form
-            insert_user_data(user_name, password, age, gender, contact)
+            insert_user_data(user_name, password, age, gender, region, contact)
             st.success("Registration Successful! Click again to continue")
             st.session_state.register_completed = True
 
@@ -332,6 +334,7 @@ def insert_doctor_data(user_name, password, qualification, reg_no, age, gender, 
     conn.commit()
     conn.close()
 
+#FUNCTION CHANGED BY RUJUTA
 def show_doctor_register_page():
     st.subheader("Sign Up")
     st.write("Sign Up if you do not already have an account")
@@ -343,13 +346,12 @@ def show_doctor_register_page():
     qualification = st.text_input("Qualification")
     df = get_data_from_db()
 
-    unique_districts = df['District'].unique()
-
+  
+    #unique_districts = df['District'].unique()
     # Select the district using a dropdown
-    selected_district1 = st.selectbox('Region 1', unique_districts)
-    selected_district2 = st.selectbox('Region 2', unique_districts)
-    selected_district3 = st.selectbox('Region 3', unique_districts)
-
+    #selected_district1 = st.selectbox('Region 1', unique_districts)
+    #selected_district2 = st.selectbox('Region 2', unique_districts)
+    #selected_district3 = st.selectbox('Region 3', unique_districts)'''
     #AARYA ADD REGION HERE
 
     age = st.number_input("Age", min_value=1, max_value=150, value=18)
@@ -432,6 +434,7 @@ def insert_ngo_data(user_name, password, reg_no, contact):
     conn.commit()
     conn.close()
 
+#FUNCTION CHANGED BY RUJUTA
 def show_ngo_register_page():
     st.subheader("Sign Up")
     st.write("Sign Up if you do not already have an account")
@@ -445,9 +448,9 @@ def show_ngo_register_page():
     unique_districts = df['District'].unique()
 
     # Select the district using a dropdown
-    selected_district1 = st.selectbox('Region 1', unique_districts)
-    selected_district2 = st.selectbox('Region 2', unique_districts)
-    selected_district3 = st.selectbox('Region 3', unique_districts)
+    # selected_district1 = st.selectbox('Region 1', unique_districts)s
+    # selected_district2 = st.selectbox('Region 2', unique_districts)
+    # selected_district3 = st.selectbox('Region 3', unique_districts)
 
     #AARYA ADD REGION HERE
 
@@ -512,10 +515,11 @@ def show_ngo_login_page():
             else:
                 st.error("Invalid NGO ID or password.")
 
-
+#FUNCTION CHANGED BY RUJUTA
 def show_user_tab():
     # Implement the Home tab here
-
+    conn = sqlite3.connect('PeriodTracker.db')
+    cur = conn.cursor()
     # Add the hamburger menu with options
     menu_options = ["Dashboard", "Calendar", "Download Report", "Contact", "Announcements", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
@@ -524,13 +528,15 @@ def show_user_tab():
     if 'end_date' not in st.session_state:
         st.session_state.end_date = datetime.date.today()
     
+    
     if selected_option == "Dashboard":
         # Display Dashboard content here
         st.title("Dashboard")
-        st.write("welcome ",st.session_state.id)
-        st.title("Your Period is expected to arrive in X days.")
+        st.subheader("Welcome!")
+        st.subheader("Your Period is expected to arrive in X days.")
         st.write("This is your Dashboard.")
         
+        #TO BE REMOVED (SYMPTOMS)
         # Drop-down for Symptoms
         st.subheader("Symptoms")
         selected_symptoms = st.multiselect(
@@ -774,10 +780,24 @@ def show_user_tab():
         st.write("nazrera21.comp@coeptech.ac.in")
         st.write("joshits21.comp@coep.ac.in")
         st.write("shreyabhatkhande@gmail.com")
+
     elif selected_option == "Announcements":
         # Display Announcements content here
         st.title("Announcements")
-        st.write("This is the Announcements page.")
+
+        cur.execute("SELECT region FROM USER WHERE id = ?", (st.session_state.id,))
+        user_region =cur.fetchone()[0]
+        cur.execute("SELECT doctor_visit FROM regionInfo WHERE name = ?",(user_region,))
+        doc_visit = cur.fetchone()[0]
+        cur.execute("SELECT ngo_visit FROM regionInfo WHERE name = ?",(user_region,))
+        ngo_visit = cur.fetchone()[0]
+        #DISPLAY VISIT DATES
+        message1 = f"Upcoming doctor visit in <span style='color:fuchsia'>{user_region}</span> is on <span style='color:red'>{doc_visit}</span>"
+        st.write(message1, unsafe_allow_html=True)
+        message2 = f"Upcoming NGO visit in <span style='color:fuchsia'>{user_region}</span> is on <span style='color:red'>{ngo_visit}</span>"
+        st.write(message2, unsafe_allow_html=True)
+
+
     elif selected_option == "Log out":
         logout_button = st.button("Log out")
         if logout_button:
@@ -786,6 +806,8 @@ def show_user_tab():
             st.session_state.register_completed = False
             st.session_state.login_completed = False
             st.write("You have been logged out. Click again to confirm Log Out")
+    
+    conn.close()
 
 
 def insert_doctor_regions(region1, region2, region3, doctor_id):
@@ -827,17 +849,21 @@ def insert_doctor_regions(region1, region2, region3, doctor_id):
         return False
 
 
-
+ 
+#FUNCTION CHANGED BY RUJUTA
 def show_doctor_tab():
     print(st.session_state.id," in doctor tab")
-    st.title("Doctor Viewer")
+    st.title("Doctor Dashboard")
     # Add doctor-specific functionalities here
     
+    
+    conn = sqlite3.connect('PeriodTracker.db')
+    cur = conn.cursor()
+    st.session_state.region = None
     menu_options = ["Dashboard","Contact Us", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
     if selected_option == "Dashboard":
-        st.title("Plan a Visit:")
-        
+        st.subheader("Plan a Visit:")
         st.write("**Select Region of Visit:**")
         df = get_data_from_db()
 
@@ -853,26 +879,41 @@ def show_doctor_tab():
         start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
         # Update session state variables when dates are changed
         st.session_state.start_date = start_date
-        st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
-        st.write("**Please select a region from the suggested set of regions**")
-        ### add region
+        
+        # Initialize the key in session state
+        if 'clicked' not in st.session_state:
+            st.session_state.clicked = {1:False,2:False}
 
-        if st.button("Confirm"):
-            if start_date:
-                pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
-                st.success("Confirmation Letter generated successfully!")
-                st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
-           
-            
-            
-            # Call the function to insert the selected regions into the doctor table
-            
+        # Function to update the value in session state
+        def clicked(button):
+            st.session_state.clicked[button] = True
+
+        # Button with callback function
+        st.button('Confirm', on_click=clicked, args=[1])
+
+        # Conditional based on value in session state, not the output
+        if st.session_state.clicked[1]:
             if insert_doctor_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
-                st.success("Regions inserted successfully!")
+                reg_list = regions('doctor', st.session_state.id)
+                st.title("Select a Region")
+                st.session_state.region = st.radio("Select a region:", reg_list)
+                st.write("Selected Region:", st.session_state.region)
+                  
+                st.button('Book visit', on_click=clicked, args=[2])
+                if st.session_state.clicked[2]:
+                    #st.write('The second button was clicked')
+                    update_visit('doctor', st.session_state.region, st.session_state.id)
+                    result_message = st.empty()
+                    result_message.success(f"Booked region: {st.session_state.region}")
+                    pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
+                    st.success("Confirmation Letter generated successfully!")
+                    st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")           
+                else:
+                    st.warning("Please select a region.")
             else:
                 st.warning("Failed to insert regions.")
         else:
-            st.warning("Please select a valid date of visit.")
+            st.warning("Please select and press confirm.")
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")
@@ -893,7 +934,7 @@ def show_doctor_tab():
             st.session_state.doctor_login_completed = False
             st.session_state.doctor_register_completed = False
             st.write("You have been logged out. Click again to confirm Log Out")
-
+    conn.close()
 
 
 def insert_ngo_regions(region1, region2, region3, ngo_id):
@@ -937,14 +978,16 @@ def insert_ngo_regions(region1, region2, region3, ngo_id):
 
 
     
-
+#FUNCTION CHANGED BY RUJUTA
 def show_ngo_tab():
-    st.title("NGO Viewer")
-    st.write("welcome ",st.session_state.id)
+    st.title("NGO DASHBOARD")
+    
+    conn = sqlite3.connect('PeriodTracker.db')
+    cur = conn.cursor()
     menu_options = ["Dashboard","Contact Us", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
     if selected_option == "Dashboard":
-        st.title("Plan a Visit:")
+        st.subheader("Plan a Visit:")
         
         st.write("**Select Region of Visit:**")
         df = get_data_from_db()
@@ -961,19 +1004,41 @@ def show_ngo_tab():
         start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
         # Update session state variables when dates are changed
         st.session_state.start_date = start_date
-        st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
+        
+        # Initialize the key in session state
+        if 'clicked' not in st.session_state:
+            st.session_state.clicked = {1:False,2:False}
 
-        if st.button("Confirm"):
-            if start_date:
-                pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
-                st.success("Confirmation Letter generated successfully!")
-                st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
+        # Function to update the value in session state
+        def clicked(button):
+            st.session_state.clicked[button] = True
+
+        # Button with callback function
+        st.button('Confirm', on_click=clicked, args=[1])
+
+        # Conditional based on value in session state, not the output
+        if st.session_state.clicked[1]:
             if insert_ngo_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
-                st.success("Regions inserted successfully!")
+                reg_list = regions('ngo', st.session_state.id)
+                st.title("Select a Region")
+                st.session_state.region = st.radio("Select a region:", reg_list)
+                st.write("Selected Region:", st.session_state.region)
+                  
+                st.button('Book visit', on_click=clicked, args=[2])
+                if st.session_state.clicked[2]:
+                    #st.write('The second button was clicked')
+                    update_visit('ngo', st.session_state.region, st.session_state.id)
+                    result_message = st.empty()
+                    result_message.success(f"Booked region: {st.session_state.region}")
+                    pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
+                    st.success("Confirmation Letter generated successfully!")
+                    st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")           
+                else:
+                    st.warning("Please select a region.")
             else:
                 st.warning("Failed to insert regions.")
         else:
-            st.warning("Please select a valid date of visit.")
+            st.warning("Please select and press confirm.")
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")

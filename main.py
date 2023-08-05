@@ -8,8 +8,6 @@ from sklearn.metrics import mean_squared_error
 from math import sqrt
 from datetime import datetime, timedelta
 import sqlite3
-from operations import add_new_row_to_table
-
 from linear_regression import PREDICT
 
 PREDICT()

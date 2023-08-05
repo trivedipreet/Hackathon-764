@@ -8,17 +8,11 @@ from sklearn.metrics import mean_squared_error
 from math import sqrt
 from datetime import datetime, timedelta
 import sqlite3
-from operations import add_new_row_to_table
-
-
-
-
-
-
+from utils import add_new_row_to_table
 
 
 def PREDICT():
- with sqlite3.connect('Backend\PeriodTracker.db') as conn:
+ with sqlite3.connect('PeriodTracker.db') as conn:
     
     #conn = sqlite3.connect('PeriodTracker.db') #database path
     cur = conn.cursor()
