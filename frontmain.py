@@ -173,7 +173,7 @@ def show_tabs():
             show_ngo_login_page()
         else:
             show_user_login_page()
-    print("Exiting show tabs")
+    
     st.session_state.user_role = user_role.lower()
     return user_role
 
@@ -904,12 +904,12 @@ def main():
 
         # Check if registration or login is completed and user_role is set, show the respective dashboard
         if (st.session_state.register_completed or st.session_state.login_completed) and st.session_state.user_role:
-            print("some")
+            
             if st.session_state.user_role == "user":
-                print("user")
+                
                 show_user_tab()
             elif st.session_state.user_role == "doctor" and (st.session_state.doctor_login_completed or st.session_state.doctor_register_completed) :  # Check doctor_login_completed
-                print("doc")
+                
                 show_doctor_tab()
             elif st.session_state.user_role == "ngo" and (st.session_state.ngo_login_completed or st.session_state.ngo_register_completed) :  # Check ngo_login_completed
                 show_ngo_tab()
@@ -918,3 +918,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
