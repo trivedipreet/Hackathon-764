@@ -23,7 +23,7 @@ def PREDICT():
     #conn = sqlite3.connect('PeriodTracker.db') #database path
     cur = conn.cursor()
     userid = 1
-    query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {}".format(userid)
+    query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} SORT BY Start".format(userid)
     df = pd.read_sql_query(query, conn)
     #print(df)
     # Prepare data for linear regression/machine learning model
