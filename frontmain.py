@@ -12,11 +12,10 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import pandas as pd
-from session_state import SessionState
+
 import random
 
-session_state = SessionState(current_id=None)
-locale.setlocale(locale.LC_ALL, '')  # Set the default locale
+
 
 #global user_role
 user_role = None
@@ -426,7 +425,7 @@ def insert_ngo_data(user_name, password, reg_no, contact):
 
     # Insert user data into the 'user' table
     query = "INSERT INTO ngo (id, name, password, reg_no, contact) VALUES (?, ?, ?, ?, ?)"
-    cursor.execute(query, (nid, user_name, password, reg_no, contact))
+    cursor.execute(query, (nid, user_name, hashed_password, reg_no, contact))
     
     st.session_state.id = nid
     conn.commit()
@@ -968,7 +967,7 @@ def show_ngo_tab():
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
                 st.success("Confirmation Letter generated successfully!")
                 st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
-            if insert_doctor_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
+            if insert_ngo_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
                 st.success("Regions inserted successfully!")
             else:
                 st.warning("Failed to insert regions.")
