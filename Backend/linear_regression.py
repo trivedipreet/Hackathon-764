@@ -161,34 +161,63 @@ def PREDICT():
 
     #Calculate irregularities
      # Get the current year
+    """
     current_year = datetime.now().year
     current_month = datetime.now().month
-    endmonth = current_month
+    endyear = current_year
+
     print("Start Date?")
     daystart = input("Day: ")
+    monthstart = input("Month: ")
+
     print("End Date?")
     dayend = input("Day: ")
+    monthend = input("Month: ")
+
     if current_month == 12:
-      endmonth = int(input("Month: "))
+      endyear = int(input("End Year? "))"""
     
-   
+    start_date ='2023-08-05'
+    end_date = '2023-08-10'
+    #start <= end <= current 
+
+    '''
     ActualDateSTART = f"{current_year}-0{current_month}-{daystart} "
-    ActualDateEND = f"{current_year}-0{endmonth}-{dayend} "
+    ActualDateEND = f"{end_year}-0{endmonth}-{dayend} "
     start_date_obj = datetime.strptime(ActualDateSTART, "%Y-%m-%d ")
+    '''
+    # Define the format for the input dates
+    input_format = "%Y-%m-%d"
 
-    Errorval = abs(next_period_start_date - start_date_obj)
+    try:
+        # Parse the input dates using the specified format
+        start_date_obj = datetime.strptime(start_date, input_format).date()
+        end_date = datetime.strptime(end_date, input_format).date()
+
+        # Check if start date is smaller than end date
+        if start_date_obj < end_date and end_date < datetime.strptime(str(datetime.now), input_format).date():
+            print("Start date:", start_date_obj)
+            print("End date:", end_date)
+        else:
+            print("Start date should be smaller than end date.")
+    except ValueError:
+        print("Invalid date format. Please enter valid dates in yyyy-mm-dd format.")
+    '''
+    Errorval = abs(next_period_start_date.date() - start_date_obj)
     ErrorvalINT = Errorval.total_seconds() / (60 * 60 * 24)
-     
+    print("Error Value:", ErrorvalINT)
+    '''
+    ErrorvalINT = (abs(next_period_start_date.date() - start_date_obj)).days
 
-    print("Error Value:", Errorval)
+    print("Error Value:", ErrorvalINT)
    
  
     if ErrorvalINT < 10:
      
        
       new_row_data = {
-      'start': ActualDateSTART,
-      'end': ActualDateEND
+      'start': str(start_date_obj),
+      'end': str(end_date)
       # Add more columns and their values as needed
       }
       add_new_row_to_table(new_row_data, 'periodLog', conn,2)
