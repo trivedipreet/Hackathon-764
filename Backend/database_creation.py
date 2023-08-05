@@ -40,8 +40,8 @@ cur.execute("""CREATE TABLE IF NOT EXISTS ngo(id TEXT(5) PRIMARY KEY,
         password TEXT NOT NULL);""")
 
 cur.execute("""CREATE TABLE IF NOT EXISTS periodLog(id TEXT(5) REFERENCES user(id), 
-        start TEXT,
-        end TEXT)""")
+        start DATE,
+        end DATE)""")
 
 #userid generation
 uid = "U"+str(random.randint(1000,9999))
