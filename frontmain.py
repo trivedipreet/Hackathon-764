@@ -12,7 +12,11 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import pandas as pd
+from session_state import SessionState
+import random
 
+# Create an instance of SessionState to store the current ID throughout the session
+session_state = SessionState(current_id=None)
 
 locale.setlocale(locale.LC_ALL, '')  # Set the default locale
 
@@ -50,7 +54,7 @@ def get_towns(selected_district):
 def generate_appointment_letter(selected_district1, selected_district2,selected_district3, date_of_visit):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
-    c.setFont("Helvetica", 20)
+    c.setFont("Helvetica", 12)
 
     c.drawString(100, 750, "Confirmation Letter")
     c.drawString(100, 700, f"District Preference 1: {selected_district1}")
@@ -135,6 +139,7 @@ def show_get_started_popup():
         st.session_state.doctor_register_completed = False
         st.session_state.doctor_login_completed = False
         st.session_state.ngo_login_completed = False
+        st.session_state.id = None
 
         show_tabs()
 
@@ -152,24 +157,24 @@ def show_tabs():
     st.write("Create an Account or Log In to Existing Account")
 
     # Add a selection box for choosing the user role (doctor, NGO, or user)
-    user_role = st.selectbox("Select User Role", ["User", "Doctor", "NGO" ],key="select2")
+    user_role = st.selectbox("Select User Role", ["user", "doctor", "ngo" ],key="select2")
 
     tabs = ["Sign Up", "Sign In"]
     selected_tab = st.selectbox("Sign Up/Sign In", tabs)
 
     if selected_tab == "Sign Up":
         # Show the registration page based on the selected role
-        if user_role == "Doctor":
+        if user_role == "doctor":
             show_doctor_register_page()
-        elif user_role == "NGO":
+        elif user_role == "ngo":
             show_ngo_register_page()
         else:
             show_user_register_page()
     elif selected_tab == "Sign In":
         # Show the login page based on the selected role
-        if user_role == "Doctor":
+        if user_role == "doctor":
             show_doctor_login_page()
-        elif user_role == "NGO":
+        elif user_role == "ngo":
             show_ngo_login_page()
         else:
             show_user_login_page()
@@ -186,13 +191,19 @@ def check_user_credentials(username, password):
     hashed_password = hash_password(password)
 
     # Check if the username and hashed password exist in the database
-    query = "SELECT name FROM user WHERE name=? AND password=?"
+    query = "SELECT * FROM user WHERE name=? AND password=?"
     cursor.execute(query, (username, hashed_password))
     result = cursor.fetchone()
 
     conn.close()
 
-    return result
+    if result:
+        # Extract the 'id' from the fetched row and store it in a variable
+        id = result[0] 
+        st.session_state.id = id # Assuming the 'id' column is the first one in the table
+        return id
+    else:
+        return None
 
 # Helper function to insert user data into the database
 def insert_user_data(username, password, age, gender, contact=''):
@@ -202,10 +213,13 @@ def insert_user_data(username, password, age, gender, contact=''):
 
     # Hash the password before inserting into the database
     hashed_password = hash_password(password)
+    uid = "U"+str(random.randint(1000,9999))
 
     # Insert user data into the 'user' table
-    query = "INSERT INTO user (name, password, age, gender, contact) VALUES (?, ?, ?, ?, ?)"
-    cursor.execute(query, (username, hashed_password, age, gender, contact))
+    query = "INSERT INTO user (id, name, password, age, gender, contact) VALUES (? ,?, ?, ?, ?, ?)"
+    cursor.execute(query, (uid, username, hashed_password, age, gender, contact))
+
+    st.session_state.id = id
 
     conn.commit()
     conn.close()
@@ -248,7 +262,6 @@ def Button():
     # st.write("Selected Town:", selected_town)
     return selected_town
 
-
 def show_user_register_page():
     st.subheader("Sign Up")
     st.write("Sign Up if you do not already have an account")
@@ -278,7 +291,6 @@ def show_user_register_page():
             st.success("Registration Successful! Click again to continue")
             st.session_state.register_completed = True
 
-
 def show_user_login_page():
     # Implement the login page here
     st.subheader("Sign In")
@@ -301,6 +313,7 @@ def show_user_login_page():
             else:
                 st.error("Invalid username or password.")
 
+
 def insert_doctor_data(user_name, password, qualification, reg_no, age, gender, contact):
     # Connect to the SQLite database
     conn = sqlite3.connect('Backend/PeriodTracker.db')
@@ -308,11 +321,17 @@ def insert_doctor_data(user_name, password, qualification, reg_no, age, gender, 
 
     # Hash the password before inserting into the database
     hashed_password = hash_password(password)
+    did = "D"+str(random.randint(1000,9999))
 
     # Insert user data into the 'doctor' table
-    query = "INSERT INTO doctor (name, password, qualification, reg_no, age, gender, contact) VALUES (?, ?, ?, ? ,? ,? ,?)"
-    cursor.execute(query, (user_name, hashed_password, qualification, reg_no, age, gender, contact))
+    query = "INSERT INTO doctor (id, name, password, qualification, reg_no, age, gender, contact) VALUES (?, ?, ?, ?, ? ,? ,? ,?)"
+    cursor.execute(query, (did, user_name, hashed_password, qualification, reg_no, age, gender, contact))
+  
 
+    
+    
+    st.session_state.id = did
+    print(st.session_state.id," in doctor register")
     conn.commit()
     conn.close()
 
@@ -355,15 +374,20 @@ def check_doctor_credentials(username, password):
     hashed_password = hash_password(password)
 
     # Check if the username and hashed password exist in the database
-    query = "SELECT name FROM doctor WHERE name=? AND password=?"
+    query = "SELECT * FROM doctor WHERE name=? AND password=?"
     cursor.execute(query, (username, hashed_password))
     result = cursor.fetchone()
 
     conn.close()
 
-    return result
+    if result:
+        # Extract the 'id' from the fetched row and store it in a variable
+        doctor_id = result[0] 
+        st.session_state.id = doctor_id # Assuming the 'id' column is the first one in the table
+        return doctor_id
+    else:
+        return None
 
-# Function to display the doctor login page
 def show_doctor_login_page():
     st.subheader("Doctor Sign In")
     st.write("Sign In if you are a registered doctor:")
@@ -385,6 +409,7 @@ def show_doctor_login_page():
                 st.error("Invalid Doctor ID or password.")
 
 
+
 def insert_ngo_data(user_name, password, reg_no, contact):
     # Connect to the SQLite database
     conn = sqlite3.connect('Backend/PeriodTracker.db')
@@ -392,11 +417,13 @@ def insert_ngo_data(user_name, password, reg_no, contact):
 
     # Hash the password before inserting into the database
     hashed_password = hash_password(password)
+    nid = "N"+str(random.randint(1000,9999))
 
     # Insert user data into the 'user' table
-    query = "INSERT INTO ngo (name, password, reg_no, contact) VALUES (?, ?, ?, ?)"
-    cursor.execute(query, (user_name, password, reg_no, contact))
-
+    query = "INSERT INTO ngo (id, name, password, reg_no, contact) VALUES (?, ?, ?, ?, ?)"
+    cursor.execute(query, (nid, user_name, password, reg_no, contact))
+    
+    st.session_state.id = nid
     conn.commit()
     conn.close()
 
@@ -437,15 +464,20 @@ def check_ngo_credentials(username, password):
     hashed_password = hash_password(password)
 
     # Check if the username and hashed password exist in the database
-    query = "SELECT name FROM ngo WHERE id=? AND password=?"
+    query = "SELECT * FROM ngo WHERE name=? AND password=?"
     cursor.execute(query, (username, hashed_password))
     result = cursor.fetchone()
 
     conn.close()
 
-    return result
+    if result:
+        # Extract the 'id' from the fetched row and store it in a variable
+        id = result[0] 
+        st.session_state.id = id # Assuming the 'id' column is the first one in the table
+        return id
+    else:
+        return None
 
-# Function to display the NGO login page
 def show_ngo_login_page():
     st.subheader("NGO Sign In")
     st.write("Sign In if you are a registered NGO:")
@@ -467,9 +499,10 @@ def show_ngo_login_page():
                 st.error("Invalid NGO ID or password.")
 
 
+
 def show_user_tab():
     # Implement the Home tab here
-
+    
     # Add the hamburger menu with options
     menu_options = ["Dashboard", "Calendar", "Download Report", "Contact", "Announcements", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
@@ -481,6 +514,7 @@ def show_user_tab():
     if selected_option == "Dashboard":
         # Display Dashboard content here
         st.title("Dashboard")
+        st.write("welcome ",st.session_state.id)
         st.title("Your Period is expected to arrive in X days.")
         st.write("This is your Dashboard.")
         
@@ -740,8 +774,52 @@ def show_user_tab():
             st.session_state.login_completed = False
             st.write("You have been logged out. Click again to confirm Log Out")
 
+def insert_doctor_regions(region1, region2, region3, doctor_id):
+    """
+    Insert the three regions into the 'doctor' table for the specified doctor.
+
+    Parameters:
+        region1 (str): The first region preference.
+        region2 (str): The second region preference.
+        region3 (str): The third region preference.
+        doctor_id (str): The ID of the doctor for whom the regions are being inserted.
+
+    Returns:
+        bool: True if the insertion is successful, False otherwise.
+    """
+    try:
+        # Connect to the database (or create if not exists)
+        conn = sqlite3.connect('Backend/PeriodTracker.db')
+        cur = conn.cursor()
+
+        # Define the SQL query for updating the regions in the doctor table
+        update_query = """UPDATE doctor
+                          SET region = ?, region2 = ?, region3 = ?
+                          WHERE id = ?"""
+
+        # Execute the query with the provided data
+        cur.execute(update_query, (region1, region2, region3, doctor_id))
+
+        # Commit the changes to the database
+        conn.commit()
+
+        # Close the database connection
+        conn.close()
+
+        return True
+
+    except Exception as e:
+        print("Error occurred:", e)
+        return False
+
+
+
 def show_doctor_tab():
-    st.title("Doctor Viewer")
+    #doctor_id = get_doctor_id()
+    print(st.session_state.id," in doctor tab")
+    
+    st.title("Doctor Viewer:")
+    st.write("welcome ",st.session_state.id)
     # Add doctor-specific functionalities here
     
     menu_options = ["Dashboard","Contact Us", "Log out"]
@@ -764,16 +842,22 @@ def show_doctor_tab():
         selected_district2 = st.selectbox('**Preference 2**', unique_districts)
         selected_district3 = st.selectbox('**Preference 3**', unique_districts)
         st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
-        st.write("**Please select a region from the suggested set of regions**")
-        ### add region
-
         if st.button("Confirm"):
             if start_date:
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
                 st.success("Confirmation Letter generated successfully!")
                 st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
+           
+            
+            
+            # Call the function to insert the selected regions into the doctor table
+            
+            if insert_doctor_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
+                st.success("Regions inserted successfully!")
             else:
-                st.warning("Please select a valid date of visit.")
+                st.warning("Failed to insert regions.")
+        else:
+            st.warning("Please select a valid date of visit.")
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")
@@ -796,12 +880,49 @@ def show_doctor_tab():
             st.write("You have been logged out. Click again to confirm Log Out")
 
 
+def insert_ngo_regions(region1, region2, region3, ngo_id):
+    """
+    Insert the three regions into the 'doctor' table for the specified doctor.
+
+    Parameters:
+        region1 (str): The first region preference.
+        region2 (str): The second region preference.
+        region3 (str): The third region preference.
+        doctor_id (str): The ID of the doctor for whom the regions are being inserted.
+
+    Returns:
+        bool: True if the insertion is successful, False otherwise.
+    """
+    try:
+        # Connect to the database (or create if not exists)
+        conn = sqlite3.connect('Backend/PeriodTracker.db')
+        cur = conn.cursor()
+
+        # Define the SQL query for updating the regions in the doctor table
+        update_query = """UPDATE ngo
+                          SET region = ?, region2 = ?, region3 = ?
+                          WHERE id = ?"""
+
+        # Execute the query with the provided data
+        cur.execute(update_query, (region1, region2, region3, ngo_id))
+
+        # Commit the changes to the database
+        conn.commit()
+
+        # Close the database connection
+        conn.close()
+
+        return True
+
+    except Exception as e:
+        print("Error occurred:", e)
+        return False
 
 
-    
 
 def show_ngo_tab():
     st.title("NGO Viewer")
+    st.write("welcome ",st.session_state.id)
     
     menu_options = ["Dashboard","Contact Us", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
@@ -828,8 +949,12 @@ def show_ngo_tab():
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
                 st.success("Confirmation Letter generated successfully!")
                 st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
+            if insert_doctor_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
+                st.success("Regions inserted successfully!")
             else:
-                st.warning("Please select a valid date of visit.")
+                st.warning("Failed to insert regions.")
+        else:
+            st.warning("Please select a valid date of visit.")
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")
@@ -921,3 +1046,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
