@@ -50,7 +50,7 @@ def get_towns(selected_district):
 def generate_appointment_letter(selected_district1, selected_district2,selected_district3, date_of_visit):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
-    c.setFont("Helvetica", 12)
+    c.setFont("Helvetica", 20)
 
     c.drawString(100, 750, "Confirmation Letter")
     c.drawString(100, 700, f"District Preference 1: {selected_district1}")
@@ -152,24 +152,24 @@ def show_tabs():
     st.write("Create an Account or Log In to Existing Account")
 
     # Add a selection box for choosing the user role (doctor, NGO, or user)
-    user_role = st.selectbox("Select User Role", ["user", "doctor", "ngo" ],key="select2")
+    user_role = st.selectbox("Select User Role", ["User", "Doctor", "NGO" ],key="select2")
 
     tabs = ["Sign Up", "Sign In"]
     selected_tab = st.selectbox("Sign Up/Sign In", tabs)
 
     if selected_tab == "Sign Up":
         # Show the registration page based on the selected role
-        if user_role == "doctor":
+        if user_role == "Doctor":
             show_doctor_register_page()
-        elif user_role == "ngo":
+        elif user_role == "NGO":
             show_ngo_register_page()
         else:
             show_user_register_page()
     elif selected_tab == "Sign In":
         # Show the login page based on the selected role
-        if user_role == "doctor":
+        if user_role == "Doctor":
             show_doctor_login_page()
-        elif user_role == "ngo":
+        elif user_role == "NGO":
             show_ngo_login_page()
         else:
             show_user_login_page()
@@ -766,7 +766,7 @@ def show_doctor_tab():
         st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
         st.write("**Please select a region from the suggested set of regions**")
         ### add region
-        
+
         if st.button("Confirm"):
             if start_date:
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
