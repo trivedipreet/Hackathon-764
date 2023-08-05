@@ -837,11 +837,7 @@ def show_doctor_tab():
     selected_option = st.sidebar.radio("Menu", menu_options)
     if selected_option == "Dashboard":
         st.title("Plan a Visit:")
-        if 'start_date' not in st.session_state:
-            st.session_state.start_date = datetime.date.today()
-        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
-        # Update session state variables when dates are changed
-        st.session_state.start_date = start_date
+        
         st.write("**Select Region of Visit:**")
         df = get_data_from_db()
 
@@ -852,6 +848,11 @@ def show_doctor_tab():
         selected_district1 = st.selectbox('**Preference 1**', unique_districts)
         selected_district2 = st.selectbox('**Preference 2**', unique_districts)
         selected_district3 = st.selectbox('**Preference 3**', unique_districts)
+        if 'start_date' not in st.session_state:
+            st.session_state.start_date = datetime.date.today()
+        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
+        # Update session state variables when dates are changed
+        st.session_state.start_date = start_date
         st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
         st.write("**Please select a region from the suggested set of regions**")
         ### add region
@@ -944,11 +945,7 @@ def show_ngo_tab():
     selected_option = st.sidebar.radio("Menu", menu_options)
     if selected_option == "Dashboard":
         st.title("Plan a Visit:")
-        if 'start_date' not in st.session_state:
-            st.session_state.start_date = datetime.date.today()
-        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
-        # Update session state variables when dates are changed
-        st.session_state.start_date = start_date
+        
         st.write("**Select Region of Visit:**")
         df = get_data_from_db()
 
@@ -959,7 +956,13 @@ def show_ngo_tab():
         selected_district1 = st.selectbox('**Preference 1**', unique_districts)
         selected_district2 = st.selectbox('**Preference 2**', unique_districts)
         selected_district3 = st.selectbox('**Preference 3**', unique_districts)
+        if 'start_date' not in st.session_state:
+            st.session_state.start_date = datetime.date.today()
+        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
+        # Update session state variables when dates are changed
+        st.session_state.start_date = start_date
         st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
+
         if st.button("Confirm"):
             if start_date:
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
