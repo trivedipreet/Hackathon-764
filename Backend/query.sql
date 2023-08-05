@@ -8,4 +8,3 @@ ALTER TABLE regionInfo ADD doctor_visit DATE;
 
 ALTER TABLE regionInfo ADD ngo_count INT;
 ALTER TABLE regionInfo ADD ngo_visit DATE;
-
