@@ -577,7 +577,7 @@ def show_user_tab():
             if res == 1:
                 st.subheader("You are likely to have PCOS. We suggest you consult a gynaecologist")
             else:
-                st.subheader("You are unlikely to have PCOS. We still suggest you consult a gynaecologist if you have concers.")
+                st.subheader("You are unlikely to have PCOS. We still suggest you consult a gynaecologist if you have concerns.")
             
 
 
