@@ -140,82 +140,81 @@ def PREDICT():
     if current_month == 12:
       endyear = int(input("End Year? "))"""
     
-    start_date ='2023-08-05'
-    end_date = '2023-08-10'
+    
     #start <= end <= current 
 
     '''
     ActualDateSTART = f"{current_year}-0{current_month}-{daystart} "
     ActualDateEND = f"{end_year}-0{endmonth}-{dayend} "
-    start_date_obj = datetime.strptime(ActualDateSTART, "%Y-%m-%d ")
+    start_date = datetime.strptime(ActualDateSTART, "%Y-%m-%d ")
     '''
     # Define the format for the input dates
     input_format = "%Y-%m-%d"
+    
+    #try:
+    # Parse the input dates using the specified format
 
-    try:
-        # Parse the input dates using the specified format
-        start_date_obj = datetime.strptime(start_date, input_format).date()
+    while(True):#CHANGE TO WHILE INPUT IS INVALID
+        start_date =input('Enter start date: ')
+        end_date = input('Enter end date: ')
+        start_date= datetime.strptime(start_date, input_format).date()
         end_date = datetime.strptime(end_date, input_format).date()
 
         # Check if start date is smaller than end date
-        if start_date_obj < end_date and end_date < datetime.strptime(str(datetime.now), input_format).date():
-            print("Start date:", start_date_obj)
+        if start_date <= end_date and end_date <= datetime.strptime(str(datetime.now().date()), input_format).date():
+            print("Start date:", start_date)
             print("End date:", end_date)
+            break
         else:
+            #Display a message
             print("Start date should be smaller than end date.")
+
+
+   
+    ErrorvalINT = (abs(next_period_start_date.date() - start_date)).days
+    print("Error Value:", ErrorvalINT)
+
+    if ErrorvalINT < 10:
+        new_row_data = {
+        'start': str(start_date),
+        'end': str(end_date)
+        # Add more columns and their values as needed
+        }
+        add_new_row_to_table(new_row_data, 'periodLog', conn,2)
+
+    # Optionally, you can print the new row DataFrame to check its contents
+    
+    else: #CHECK IF WORKS
+        #QUESTIONS AND FORGOT?
+        def lateperiod(forgottoenter):
+            if forgottoenter:
+                current_date = datetime.now().date()
+                predstart1 = datetime.strptime(formatted_next_period_start_date, "%Y-%m-%d").date()
+                predstart2 = datetime.strptime(formatted_next_period_start_date_2, "%Y-%m-%d").date()
+                predstart3 = datetime.strptime(formatted_next_period_start_date_3, "%Y-%m-%d").date()
+            
+                if predstart1 < current_date:
+                    d1 = {'start': formatted_next_period_start_date,
+                        'end': formatted_next_period_end_date}
+                    add_new_row_to_table(d1, 'periodLog', conn,2)
+                if predstart2 < current_date:
+                    d2 = {'start': formatted_next_period_start_date_2,
+                        'end': formatted_next_period_end_date_2 }
+                    add_new_row_to_table(d2, 'periodLog', conn,2)
+                if predstart3 < current_date:
+                    d3 = {'start': formatted_next_period_start_date_3,
+                        'end': formatted_next_period_end_date_3 }
+                    add_new_row_to_table(d3, 'periodLog', conn,2)
+                
+
+
+
+'''
     except ValueError:
         print("Invalid date format. Please enter valid dates in yyyy-mm-dd format.")
-    '''
-    Errorval = abs(next_period_start_date.date() - start_date_obj)
+    
+    Errorval = abs(next_period_start_date.date() - start_date)
     ErrorvalINT = Errorval.total_seconds() / (60 * 60 * 24)
     print("Error Value:", ErrorvalINT)
-    '''
-    ErrorvalINT = (abs(next_period_start_date.date() - start_date_obj)).days
+'''
 
-    print("Error Value:", ErrorvalINT)
-   
- 
-    if ErrorvalINT < 10:
-     
-       
-      new_row_data = {
-      'start': str(start_date_obj),
-      'end': str(end_date)
-      # Add more columns and their values as needed
-      }
-      add_new_row_to_table(new_row_data, 'periodLog', conn,2)
-
-     # Optionally, you can print the new row DataFrame to check its contents
-    else:
-     #QUESTIONS AND FORGOT?
-     def lateperiod(forgottoenter):
-       if forgottoenter:
-         current_date = datetime.now().date()
-         predstart1 = datetime.strptime(formatted_next_period_start_date, "%Y-%m-%d").date()
-         predstart2 = datetime.strptime(formatted_next_period_start_date_2, "%Y-%m-%d").date()
-         predstart3 = datetime.strptime(formatted_next_period_start_date_3, "%Y-%m-%d").date()
-        
-         if predstart1 < current_date:
-             d1 = {'start': formatted_next_period_start_date,
-                    'end': formatted_next_period_end_date}
-             add_new_row_to_table(d1, 'periodLog', conn,2)
-         if predstart2 < current_date:
-             d2 = {'start': formatted_next_period_start_date_2,
-                    'end': formatted_next_period_end_date_2 }
-             add_new_row_to_table(d2, 'periodLog', conn,2)
-         if predstart3 < current_date:
-             d3 = {'start': formatted_next_period_start_date_3,
-                    'end': formatted_next_period_end_date_3 }
-             add_new_row_to_table(d3, 'periodLog', conn,2)
-             
-
-
-
-  
-
-
-
-
-
-
-   
