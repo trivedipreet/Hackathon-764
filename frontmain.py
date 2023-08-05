@@ -8,7 +8,7 @@ import sqlite3
 import hashlib
 locale.setlocale(locale.LC_ALL, '')  # Set the default locale
 
-global user_role
+#global user_role
 user_role = None
 
 '''def load_translations(lang):
@@ -100,6 +100,11 @@ def show_get_started_popup():
         st.session_state.started = True  # Set the flag to True when the button is clicked
         st.session_state.register_completed = False  # Reset register_completed flag
         st.session_state.login_completed = False  # Reset login_completed flag
+        st.session_state.ngo_register_completed = False
+        st.session_state.doctor_register_completed = False
+        st.session_state.doctor_login_completed = False
+        st.session_state.ngo_login_completed = False
+        
         show_tabs()
 
     # Simulate continuous loop of greetings
@@ -111,36 +116,39 @@ def show_get_started_popup():
         greeting_placeholder.empty()  # Clear the previous greeting before displaying the next
 
 def show_tabs():
+    #global user_role
     st.subheader("Welcome!")
     st.write("Create an Account or Log In to Existing Account")
 
     # Add a selection box for choosing the user role (doctor, NGO, or user)
-    user_role = st.selectbox("Select User Role", ["User", "Doctor", "NGO" ])
+    user_role = st.selectbox("Select User Role", ["user", "doctor", "ngo" ],key="select2")
 
     tabs = ["Sign Up", "Sign In"]
     selected_tab = st.selectbox("Sign Up/Sign In", tabs)
 
     if selected_tab == "Sign Up":
         # Show the registration page based on the selected role
-        if user_role == "Doctor":
+        if user_role == "doctor":
             show_doctor_register_page()
-        elif user_role == "NGO":
+        elif user_role == "ngo":
             show_ngo_register_page()
         else:
             show_user_register_page()
     elif selected_tab == "Sign In":
         # Show the login page based on the selected role
-        if user_role == "Doctor":
+        if user_role == "doctor":
             show_doctor_login_page()
-        elif user_role == "NGO":
+        elif user_role == "ngo":
             show_ngo_login_page()
         else:
             show_user_login_page()
     print("Exiting show tabs")
+    st.session_state.user_role = user_role.lower()
+    return user_role
 
 
 # Helper function to insert user data into the database
-def insert_user_data(username, password, age, gender, email=''):
+def insert_user_data(username, password, age, gender, contact=''):
     # Connect to the SQLite database
     conn = sqlite3.connect('Backend/PeriodTracker.db')
     cursor = conn.cursor()
@@ -149,8 +157,8 @@ def insert_user_data(username, password, age, gender, email=''):
     hashed_password = hash_password(password)
 
     # Insert user data into the 'user' table
-    query = "INSERT INTO user (name, password, age, gender, email) VALUES (?, ?, ?, ?, ?)"
-    cursor.execute(query, (username, hashed_password, age, gender, email))
+    query = "INSERT INTO user (name, password, age, gender, contact) VALUES (?, ?, ?, ?, ?)"
+    cursor.execute(query, (username, hashed_password, age, gender, contact))
 
     conn.commit()
     conn.close()
@@ -249,6 +257,7 @@ def show_doctor_register_page():
             # Process the registration form
             insert_doctor_data(user_name, password, qualification, reg_no, age, gender, contact)
             st.success("Registration Successful!")
+            st.session_state.doctor_register_completed = True
             st.session_state.register_completed = True
 
 def check_doctor_credentials(username, password):
@@ -282,6 +291,7 @@ def show_doctor_login_page():
 
             if result is not None:
                 st.success("Login successful!")
+                st.session_state.login_completed = True
                 st.session_state.doctor_login_completed = True
                 # Add other doctor-specific functionalities here
             else:
@@ -330,6 +340,7 @@ def show_ngo_register_page():
             insert_ngo_data(user_name, password, reg_no, contact)
             st.success("Registration Successful!")
             st.session_state.register_completed = True
+            st.session_state.ngo_register_completed = True
 
 def check_ngo_credentials(username, password):
     conn = sqlite3.connect('Backend/PeriodTracker.db')
@@ -362,6 +373,7 @@ def show_ngo_login_page():
 
             if result is not None:
                 st.success("Login successful!")
+                st.session_state.login_completed = True
                 st.session_state.ngo_login_completed = True
                 # Add other NGO-specific functionalities here
             else:
@@ -650,7 +662,6 @@ def show_ngo_tab():
     # Add NGO-specific functionalities here
 
 
-
 def main():
     '''lang = st.selectbox("Select Language", ["English", "Hindi"])
     if lang == "Hindi":
@@ -683,27 +694,38 @@ def main():
     )
 
     #st.title("Menstrual Health Tracker")
-    
+
+    # Remove the global user_role variable from here, as it's now being managed in session_state
+    # user_role = None  # Remove this line
 
     # Initialize st.session_state.started if not already set
     if 'started' not in st.session_state:
         st.session_state.started = False
 
+    if 'user_role' not in st.session_state:
+        st.session_state.user_role = None
+
+    # Check if the user is not started, show the Get Started popup
     if not st.session_state.started:
         show_get_started_popup()
-    elif not st.session_state.register_completed and not st.session_state.login_completed:
-        show_tabs()
-    elif st.session_state.register_completed or st.session_state.login_completed:
-        if user_role == "user":
-            show_user_tab()
-        elif user_role == "doctor":
-            show_doctor_tab()
-        elif user_role == "ngo":
-            show_ngo_tab()
-        else:
-            st.error("Invalid user type.")  # Call show_home_tab() directly here
-    #this if was elif if theres a glitch'''
+    else:
+        # Check if the registration or login is not completed, show the tabs
+        if not st.session_state.register_completed and not st.session_state.login_completed:
+            show_tabs()
 
+        # Check if registration or login is completed and user_role is set, show the respective dashboard
+        if (st.session_state.register_completed or st.session_state.login_completed) and st.session_state.user_role:
+            print("some")
+            if st.session_state.user_role == "user":
+                print("user")
+                show_user_tab()
+            elif st.session_state.user_role == "doctor" and (st.session_state.doctor_login_completed or st.session_state.doctor_register_completed) :  # Check doctor_login_completed
+                print("doc")
+                show_doctor_tab()
+            elif st.session_state.user_role == "ngo" and (st.session_state.ngo_login_completed or st.session_state.ngo_register_completed) :  # Check ngo_login_completed
+                show_ngo_tab()
+            else:
+                st.error("Invalid user type.")
 
 if __name__ == "__main__":
     main()
