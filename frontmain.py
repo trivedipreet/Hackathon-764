@@ -7,6 +7,11 @@ import locale
 import datetime
 import sqlite3
 import hashlib
+import pandas as pd
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
+
 
 
 locale.setlocale(locale.LC_ALL, '')  # Set the default locale
@@ -25,6 +30,39 @@ user_role = None
     translation.install()
     return translation'''
 
+
+
+def get_data_from_db():
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    query = "SELECT District FROM regionInfo"
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df
+
+# Function to retrieve towns based on the selected district
+def get_towns(selected_district):
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    query = f"SELECT Name FROM regionInfo WHERE District='{selected_district}'"
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df['Name'].unique()
+
+def generate_appointment_letter(selected_district1, selected_district2,selected_district3, date_of_visit):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    c.setFont("Helvetica", 12)
+
+    c.drawString(100, 750, "Confirmation Letter")
+    c.drawString(100, 700, f"District Preference 1: {selected_district1}")
+    c.drawString(100, 680, f"District Preference 2: {selected_district2}")
+    c.drawString(100, 660, f"District Preference 3: {selected_district3}")
+    c.drawString(100, 640, f"Date of Visit: {date_of_visit}")
+
+    c.save()
+
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+    return pdf_bytes
 
 def generate_calendar(year, month):
     # Get the first day of the month
@@ -392,14 +430,13 @@ def show_user_tab():
     # Implement the Home tab here
 
     # Add the hamburger menu with options
-    menu_options = ["Dashboard", "Calendar", "History", "Contact", "Announcements", "Log out"]
+    menu_options = ["Dashboard", "Calendar", "Download Report", "Contact", "Announcements", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
     if 'start_date' not in st.session_state:
         st.session_state.start_date = datetime.date.today()
     if 'end_date' not in st.session_state:
         st.session_state.end_date = datetime.date.today()
-
-
+    
     if selected_option == "Dashboard":
         # Display Dashboard content here
         st.title("Dashboard")
@@ -632,7 +669,7 @@ def show_user_tab():
         st.markdown(calendar_js, unsafe_allow_html=True)
     
         
-    elif selected_option == "History":
+    elif selected_option == "Download Report":
         # Display History content here
         st.title(("History"))
         st.write("This is the History.")
@@ -662,12 +699,114 @@ def show_user_tab():
             st.write("You have been logged out. Click again to confirm Log Out")
 
 def show_doctor_tab():
-    st.write("Doctor Dashboard")
+    st.title("Doctor Viewer")
     # Add doctor-specific functionalities here
+    
+    menu_options = ["Dashboard","Contact Us", "Log out"]
+    selected_option = st.sidebar.radio("Menu", menu_options)
+    if selected_option == "Dashboard":
+        st.title("Plan a Visit:")
+        if 'start_date' not in st.session_state:
+            st.session_state.start_date = datetime.date.today()
+        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
+        # Update session state variables when dates are changed
+        st.session_state.start_date = start_date
+        st.write("**Select Region of Visit:**")
+        df = get_data_from_db()
+
+        # Get unique districts from the DataFrame
+        unique_districts = df['District'].unique()
+
+        # Select the district using a dropdown
+        selected_district1 = st.selectbox('**Preference 1**', unique_districts)
+        selected_district2 = st.selectbox('**Preference 2**', unique_districts)
+        selected_district3 = st.selectbox('**Preference 3**', unique_districts)
+        st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
+        if st.button("Confirm"):
+            if start_date:
+                pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
+                st.success("Confirmation Letter generated successfully!")
+                st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
+            else:
+                st.warning("Please select a valid date of visit.")
+
+    elif selected_option=='Contact Us':
+        st.title("Contact for site help: ")
+        st.write("rujutabudke@gmail.com")
+        st.write("aaryakkw@gmail.com")
+        st.write("trivedipreet@gmail.com")
+        st.write("nazrera21.comp@coeptech.ac.in")
+        st.write("joshits21.comp@coep.ac.in")
+        st.write("shreyabhatkhande@gmail.com")
+
+    elif selected_option=="Log Out":
+        logout_button2 = st.button("Log out")
+        if logout_button2:
+            # Log out and reset the session state
+            st.session_state.started = False
+            st.session_state.register_completed = False
+            st.session_state.login_completed = False
+            st.session_state.doctor_login_completed = False
+            st.session_state.doctor_register_completed = False
+            st.write("You have been logged out. Click again to confirm Log Out")
+
+
+
+
+    
 
 def show_ngo_tab():
-    st.write("NGO Dashboard")
-    # Add NGO-specific functionalities here
+    st.title("NGO Viewer")
+    
+    menu_options = ["Dashboard","Contact Us", "Log out"]
+    selected_option = st.sidebar.radio("Menu", menu_options)
+    if selected_option == "Dashboard":
+        st.title("Plan a Visit:")
+        if 'start_date' not in st.session_state:
+            st.session_state.start_date = datetime.date.today()
+        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
+        # Update session state variables when dates are changed
+        st.session_state.start_date = start_date
+        st.write("**Select Region of Visit:**")
+        df = get_data_from_db()
+
+        # Get unique districts from the DataFrame
+        unique_districts = df['District'].unique()
+
+        # Select the district using a dropdown
+        selected_district1 = st.selectbox('**Preference 1**', unique_districts)
+        selected_district2 = st.selectbox('**Preference 2**', unique_districts)
+        selected_district3 = st.selectbox('**Preference 3**', unique_districts)
+        st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
+        if st.button("Confirm"):
+            if start_date:
+                pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
+                st.success("Confirmation Letter generated successfully!")
+                st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
+            else:
+                st.warning("Please select a valid date of visit.")
+
+    elif selected_option=='Contact Us':
+        st.title("Contact for site help: ")
+        st.write("rujutabudke@gmail.com")
+        st.write("aaryakkw@gmail.com")
+        st.write("trivedipreet@gmail.com")
+        st.write("nazrera21.comp@coeptech.ac.in")
+        st.write("joshits21.comp@coep.ac.in")
+        st.write("shreyabhatkhande@gmail.com")
+
+    elif selected_option=="Log Out":
+        logout_button3 = st.button("Log out")
+        if logout_button3:
+            # Log out and reset the session state
+            st.session_state.started = False
+            #st.session_state.register_completed = False
+            #st.session_state.login_completed = False
+            st.session_state.ngo_login_completed = False
+            st.session_state.ngo_register_completed = False
+            st.write("You have been logged out. Click again to confirm Log Out")
+
+
 
 
 def main():
