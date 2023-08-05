@@ -47,3 +47,24 @@ def region_rec(type, id):
         regions.append(i[0])
 
     return regions
+
+#take 3 regions and update
+def update_region(type, id, region, region2, region3):
+    if type == 'doctor':
+        cur.execute("UPDATE doctor SET region = ?, region2 = ?, region3 = ? WHERE  id = ? ", (region, region2, region3, id))
+    elif type == 'ngo':
+        cur.execute("UPDATE ngo SET region = ?, region2 = ?, region3 = ? WHERE  id = ? ", (region, region2, region3, id))
+    conn.commit()
+
+
+def update_visit(type, region, date):
+    if type == 'doctor':
+        cur.execute("UPDATE regionInfo SET doctor_count = doctor_count + 1 WHERE name = ?",(region,))
+        cur.execute("UPDATE regionInfo SET doctor_visit = ? WHERE name = ?",(date, region))
+    elif type == 'ngo':
+        cur.execute("UPDATE regionInfo SET ngo_count = ngo_count + 1 WHERE name = ?",(region,))
+        cur.execute("UPDATE regionInfo SET doctor_visit = ? WHERE name = ?",(date, region))
+
+
+update_region_db('doctor', 'D4360', 'Pune', 'Yavatmal', 'Satara')
+update_region_db('ngo', 'N5389', 'Sangli', 'Thane', 'Bid')

@@ -66,13 +66,13 @@ cur.execute("""INSERT INTO user(id, name, age, gender, region, contact, password
 cur.execute("""INSERT INTO doctor(id, name, qualification, reg_no, age, gender, region,  region2, region3,contact, password) VALUES(?, "Doctor 1","MD Gyn", 12345, 41, 'F', "Pune", "Chandrapur", "Bid", 904328761, "password")""",(did,))
 cur.execute("""INSERT INTO ngo(id, name, reg_no, region, region2, region3, contact, password) VALUES(?,"NGO 1", 54321, "Pune","Chandrapur", "Bid", 7891234560, "password")""", (nid,))
 
-periodData = pd.read_excel('Backend\SyntheticData.xlsx', header=0)  
-periodData.to_sql('periodLog', conn, if_exists='append', index=False)
 periodData = pd.read_excel('Backend\RegularCycle.xlsx', header=0)  
 periodData.to_sql('periodLog', conn, if_exists='append', index=False)
 regionData = pd.read_csv('Backend\Population.csv', header=0)  
 regionData.to_sql('regionInfo', conn, if_exists='append', index=False)
 '''
+periodData = pd.read_excel('Backend\SyntheticData.xlsx', header=0)  
+periodData.to_sql('periodLog', conn, if_exists='append', index=False)
 conn.commit()
 
 #except:
