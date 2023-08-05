@@ -1,0 +1,19 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Welcome to My App"
+msgstr "Welcome to My App"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Calendar"
+msgstr "Calendar"
+
+msgid "History"
+msgstr "History"
+
+msgid "Log out"
+msgstr "Log out"
