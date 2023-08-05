@@ -12,9 +12,6 @@ msgstr "साइन इन करें"
 msgid "Welcome to My App"
 msgstr "मेरे ऐप में आपका स्वागत है"
 
-msgid "Dashboard"
-msgstr "डैशबोर्ड"
-
 msgid "Calendar"
 msgstr "कैलेंडर"
 
@@ -23,3 +20,273 @@ msgstr "इतिहास"
 
 msgid "Log out"
 msgstr "लॉग आउट"
+
+msgid "Confirmation Letter"
+msgstr "पुष्टिकरण पत्र"
+
+msgid "District Preference"
+msgstr "जिला वरीयता"
+
+msgid "Date of Visit"
+msgstr "विज़िट की तारीख़"
+
+msgid "Regular Patient Sign Up"
+msgstr "नियमित रोगी साइन अप करें"
+
+msgid "Sign Up as a Regular Patient"
+msgstr "एक नियमित रोगी के रूप में साइन अप करें"
+
+msgid "Username"
+msgstr "उपयोगकर्ता नाम"
+
+msgid "Password"
+msgstr "पासवर्ड"
+
+msgid "Confirm Password"
+msgstr "पासवर्ड की पुष्टि कीजिये"
+
+msgid "Please fill in all fields."
+msgstr "कृपया सभी स्थानों को भरें।"
+
+msgid "Passwords do not match"
+msgstr "सांकेतिक शब्द मेल नहीं खाते!"
+
+msgid "Regular Patient Registration"
+msgstr "नियमित रोगी पंजीकरण सफल! जारी रखने"
+
+msgid "Successful! Click again to continue"
+msgstr "के लिए फिर से क्लिक करें"
+
+msgid "Get Started"
+msgstr "शुरू हो जाओ"
+
+msgid "Select User Role"
+msgstr "उपयोगकर्ता भूमिका चुनें"
+
+msgid "doctor"
+msgstr "चिकित्सक"
+
+msgid "ngo"
+msgstr "गैर सरकारी संगठन"
+
+msgid "Sign Up if you do not already have an account"
+msgstr "यदि आपके पास पहले से कोई खाता नहीं है तो साइन अप करें"
+
+msgid "Age"
+msgstr "आयु"
+
+msgid "Gender"
+msgstr "लिंग"
+
+msgid "Male"
+msgstr "नर"
+
+msgid "Female"
+msgstr "महिला"
+
+msgid "Other"
+msgstr "अन्य"
+
+msgid "Contact Number"
+msgstr "संपर्क संख्या"
+
+msgid "Registration Successful! Click again to continue"
+msgstr "सफल पंजीकरण! जारी रखने के लिए फिर से क्लिक करें"
+
+msgid "Login successful! Click again to continue"
+msgstr "लॉग इन सफल! जारी रखने के लिए फिर से क्लिक करें"
+
+msgid "Qualification"
+msgstr "योग्यता"
+
+msgid "Registration Number"
+msgstr "पंजीकरण संख्या"
+
+msgid "Doctor Sign In"
+msgstr "डॉक्टर साइन इन करें"
+
+msgid "Sign In if you are a registered doctor:"
+msgstr "यदि आप एक पंजीकृत डॉक्टर हैं तो साइन इन करें:"
+
+msgid "Invalid Doctor ID or password."
+msgstr "अमान्य डॉक्टर आईडी या पासवर्ड."
+
+msgid "NGO Sign In"
+msgstr "एनजीओ साइन इन करें"
+
+msgid "Sign In if you are a registered NGO:"
+msgstr "यदि आप एक पंजीकृत एनजीओ हैं तो साइन इन करें:"
+
+msgid "NGO ID"
+msgstr "एनजीओ आईडी"
+
+msgid "Invalid NGO ID or password."
+msgstr "अमान्य एनजीओ आईडी या पासवर्ड."
+
+msgid "Your Period is expected to arrive in X days."
+msgstr "आपकी अवधि X दिनों में आने की उम्मीद है।"
+
+msgid "This is your Dashboard."
+msgstr "यह आपका डैशबोर्ड है."
+
+msgid "Confirmation Letter"
+msgstr "पुष्टिकरण पत्र"
+
+msgid "District Preference 1"
+msgstr "जिला वरीयता 1"
+
+msgid "District Preference 2"
+msgstr "जिला वरीयता 2"
+
+msgid "District Preference 3"
+msgstr "जिला वरीयता 3"
+
+msgid "Date of Visit"
+msgstr "विज़िट की तारीख़"
+
+msgid "Passwords do not match!"
+msgstr "सांकेतिक शब्द मेल नहीं खाते!"
+
+msgid "Regular Patient Registration Successful! Click again to continue"
+msgstr "नियमित रोगी पंजीकरण सफल! जारी रखने के लिए फिर से क्लिक करें"
+
+msgid "Get Started"
+msgstr "शुरू हो जाओ"
+
+msgid "Select User Role"
+msgstr "उपयोगकर्ता भूमिका चुनें"
+
+msgid "Invalid username or password."
+msgstr "अमान्य उपयोगकर्ता नाम या पासवर्ड।"
+
+msgid "Menu"
+msgstr "मेन्यू"
+
+msgid "Dashboard"
+msgstr "डैशबोर्ड"
+
+msgid "Symptoms"
+msgstr "लक्षण"
+
+msgid "Select Symptoms"
+msgstr "लक्षण चुनें"
+
+msgid "Abdominal Pain"
+msgstr "पेट में दर्द"
+
+msgid "Back Pain"
+msgstr "पीठ दर्द"
+
+msgid "Bloating"
+msgstr "सूजन"
+
+msgid "Fatigue"
+msgstr "थकान"
+
+msgid "Headache"
+msgstr "सिर दर्द"
+
+msgid "Mood Swings"
+msgstr "मिजाज़"
+
+msgid "Nausea"
+msgstr "जी मिचलाना"
+
+msgid "Factors"
+msgstr "कारकों"
+
+msgid "Pregnant"
+msgstr "गर्भवती"
+
+msgid "Pregnancy Start Date"
+msgstr "गर्भावस्था प्रारंभ तिथि"
+
+msgid "Pregnancy End Date"
+msgstr "गर्भावस्था की समाप्ति तिथि"
+
+msgid "Lactating"
+msgstr "स्तनपान कराने वाली"
+
+msgid "Lactation Start Date"
+msgstr "स्तनपान आरंभ तिथि"
+
+msgid "Lactation End Date"
+msgstr "स्तनपान समाप्ति तिथि"
+
+msgid "Contraceptive"
+msgstr "गर्भनिरोधक"
+
+msgid "Contraceptive Start Date"
+msgstr "गर्भनिरोधक आरंभ तिथि"
+
+msgid "Contraceptive End Date"
+msgstr "गर्भनिरोधक समाप्ति तिथि"
+
+msgid "Calendar"
+msgstr "पंचांग"
+
+msgid "This is the Calendar."
+msgstr "यह कैलेंडर है."
+
+msgid "Start Date"
+msgstr "आरंभ करने की तिथि"
+
+msgid "End Date"
+msgstr "अंतिम तिथि"
+
+msgid "Select Year"
+msgstr "वर्ष चुनें"
+
+msgid "Select Month"
+msgstr "महीना चुनिए"
+
+msgid "Download Report"
+msgstr "रिपोर्ट डाउनलोड करें"
+
+msgid "Contact"
+msgstr "संपर्क"
+
+msgid "Contact your Nearest Doctor:"
+msgstr "अपने नजदीकी डॉक्टर से संपर्क करें:"
+
+msgid "Contact your Nearest NGO:"
+msgstr "अपने नजदीकी एनजीओ से संपर्क करें:"
+
+msgid "Contact for site help:"
+msgstr "साइट सहायता के लिए संपर्क करें:"
+
+msgid "Announcements"
+msgstr "घोषणाएं"
+
+msgid "This is the Announcements page."
+msgstr "यह घोषणा पृष्ठ है."
+
+msgid "You have been logged out. Click again to confirm"
+msgstr "आप लॉग आउट हो चुके हैं। लॉग आउट की पुष्टि करने के लिए फिर से क्लिक करें"
+
+msgid "Plan a Visit:"
+msgstr "यात्रा की योजना बनाएं:"
+
+msgid "Select Date of Visit:"
+msgstr "यात्रा की तिथि चुनें:"
+
+msgid "Select Region of Visit:"
+msgstr "यात्रा का क्षेत्र चुनें:"
+
+msgid "Preference"
+msgstr "पसंद"
+
+msgid "Selected Districts:"
+msgstr "चयनित जिले:"
+
+msgid "Confirm"
+msgstr "पुष्टि करना"
+
+msgid "Confirmation Letter generated successfully!"
+msgstr "पुष्टिकरण पत्र सफलतापूर्वक तैयार हुआ!"
+
+msgid "View PDF"
+msgstr "पीडीएफ देखें"
+
+msgid "Please select a valid date of visit."
+msgstr "कृपया यात्रा की वैध तिथि चुनें।"
