@@ -192,3 +192,48 @@ msgstr "पी.डी.एफ पहा"
 
 msgid "Please select a valid date of visit."
 msgstr "कृपया भेटीची वैध तारीख निवडा."
+
+msgid "	Please enter your current age."
+msgstr "कृपया तुमचे वर्तमान वय प्रविष्ट करा."
+
+msgid "	Kindly enter your height (in cm or feet) and weight (in kg )"
+msgstr "कृपया तुमची उंची (सेमी किंवा फूट) आणि वजन (किलोमध्ये) प्रविष्ट करा"
+
+msgid "	What is your blood group? (Please specify A, B, AB, or O, along with the Rh factor +/-)"
+msgstr "तुमचा रक्तगट कोणता आहे? (कृपया Rh फॅक्टर +/- सोबत A, B, AB, किंवा O निर्दिष्ट करा)"
+
+msgid "	Is your menstrual cycle regular or irregular ?"
+msgstr "तुमची मासिक पाळी नियमित आहे की अनियमित?"
+
+msgid "	On average, how many days does your menstrual period usually last?"
+msgstr "सरासरी, तुमची मासिक पाळी सहसा किती दिवस टिकते?"
+
+msgid "	Are you currently pregnant?"
+msgstr "तू सध्या गरोदर आहेस का?"
+
+msgid "	Have you had any abortions in the past? Please specify the number."
+msgstr "तुम्ही यापूर्वी गर्भपात केला आहे का? कृपया क्रमांक निर्दिष्ट करा."
+
+msgid "	Please provide your hip and waist measurements (in inches)."
+msgstr "कृपया तुमचे कूल्हे आणि कंबर माप (इंच मध्ये) द्या."
+
+msgid "	Have you experienced significant weight gain recently?"
+msgstr "कृपया तुमचे कूल्हे आणि कंबर माप (इंच मध्ये) द्या."
+
+msgid "	Have you noticed increased or excess hair growth on your body, particularly in areas not typical for women?"
+msgstr "तुमच्या शरीरावर केसांची वाढ किंवा जास्त वाढ झाल्याचे तुमच्या लक्षात आले आहे, विशेषत: स्त्रियांसाठी वैशिष्ट्यपूर्ण नसलेल्या भागात?"
+
+msgid "	Have you observed any darkening of your skin, especially in skin folds or creases?"
+msgstr "तुम्ही तुमची त्वचा काळी पडल्याचे निरीक्षण केले आहे, विशेषत: त्वचेच्या पटीत किंवा क्रिझमध्ये?"
+
+msgid "	Are you currently experiencing abnormal or excessive hair fall?"
+msgstr "तुम्ही सध्या असामान्य किंवा जास्त केस गळत आहात?"
+
+msgid "	Have you noticed an increase in the number of pimples or acne on your skin?"
+msgstr "तुमच्या त्वचेवर मुरुम किंवा मुरुमांच्या संख्येत वाढ झाल्याचे तुमच्या लक्षात आले आहे का?"
+
+msgid "	Do you consume fast food or processed foods often?"
+msgstr "तुम्ही अनेकदा फास्ट फूड किंवा प्रक्रिया केलेले पदार्थ खातात का?"
+
+msgid "	Do you engage in at least 45 minutes of exercise every day?"
+msgstr "तुम्ही दररोज किमान ४५ मिनिटे व्यायाम करत आहात का?"
