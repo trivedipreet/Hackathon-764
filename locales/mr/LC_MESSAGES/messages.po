@@ -1,1 +1,194 @@
-hi rujuta
+msgid "Confirmation Letter"
+msgstr "पुष्टिकरण पत्र"
+
+msgid "District Preference 1"
+msgstr "जिल्हा पसंती 1"
+
+msgid "District Preference 2"
+msgstr "जिल्हा पसंती 2"
+
+msgid "District Preference 3"
+msgstr "जिल्हा पसंती 3"
+
+msgid "Date of Visit"
+msgstr "भेटीची तारीख"
+
+msgid "Regular Patient Sign Up"
+msgstr "नियमित रुग्ण साइन अप करा"
+
+msgid "Sign Up as a Regular Patient"
+msgstr msgstr "नियमित रुग्ण म्हणून साइन अप करा"
+
+msgid "Username"
+"वापरकर्तानाव"
+
+msgid "Password"
+msgstr "पासवर्ड"
+
+msgid "Confirm Password"
+msgstr "पासवर्डची पुष्टी करा"
+
+msgid "Please fill in all fields."
+msgstr "कृपया सर्व फील्ड भरा."
+
+msgid "Passwords do not match!"
+msgstr "पासवर्ड जुळत नाही!"
+
+msgid "Regular Patient Registration Successful! Click again to continue"
+msgstr "नियमित रुग्ण नोंदणी यशस्वी! सुरू ठेवण्यासाठी पुन्हा क्लिक करा"
+
+msgid "Get Started"
+msgstr "सुरु करूया"
+
+msgid "Select User Role"
+msgstr "वापरकर्ता भूमिका निवडा"
+
+msgid "doctor"
+msgstr "डॉक्टर"
+
+msgid "ngo"
+msgstr "एन.जी.ओ"
+
+msgid "Sign Up if you do not already have an account"
+msgstr "तुमच्याकडे आधीपासूनच खाते नसल्यास साइन अप करा"
+
+msgid "Age"
+msgstr "वय"
+
+msgid "Gender"
+msgstr "लिंग"
+
+msgid "Male"
+msgstr "पुरुष"
+
+msgid "Female"
+msgstr "स्त्री"
+
+msgid "Other"
+msgstr "इतर"
+
+msgid "Contact Number"
+msgstr "संपर्क क्रमांक"
+
+msgid "Registration Successful! Click again to continue"
+msgstr "नोंदणी यशस्वी! सुरू ठेवण्यासाठी पुन्हा क्लिक करा"
+
+msgid "Login successful! Click again to continue"
+msgstr "लॉग इन यशस्वी! सुरू ठेवण्यासाठी पुन्हा क्लिक करा"
+
+msgid "Invalid username or password."
+msgstr "अवैध वापरकर्तानाव किंवा पासवर्ड."
+
+msgid "Qualification"
+msgstr "पात्रता"
+
+msgid "Registration Number"
+msgstr "नोंदणी क्रमांक"
+
+msgid "Doctor Sign In"
+msgstr "डॉक्टर साइन इन करा"
+
+msgid "Sign In if you are a registered doctor:"
+msgstr "आपण नोंदणीकृत डॉक्टर असल्यास साइन इन करा:"
+
+msgid "Invalid Doctor ID or password."
+msgstr "अवैध डॉक्टर आयडी किंवा पासवर्ड."
+
+msgid "NGO Sign In"
+msgstr "एन.जी.ओ साइन इन"
+
+msgid "Sign In if you are a registered NGO:"
+msgstr "आपण नोंदणीकृत एन.जी.ओ असल्यास साइन इन करा:"
+
+msgid "NGO ID"
+msgstr "एन.जी.ओ आयडी"
+
+msgid "Invalid NGO ID or password."
+msgstr "अवैध एन.जी.ओ आयडी किंवा पासवर्ड"
+
+msgid "Menu"
+msgstr "मेनू"
+
+msgid "Dashboard"
+msgstr "डॅशबोर्ड"
+
+msgid "Your Period is expected to arrive in X days."
+msgstr "तुमचा कालावधी X दिवसात येण्याची अपेक्षा आहे."
+
+msgid "This is your Dashboard."
+msgstr "हा तुमचा डॅशबोर्ड आहे."
+
+msgid "Symptoms"
+msgstr "लक्षणे"
+
+msgid "Select Symptoms"
+msgstr "लक्षणे निवडा"
+
+msgid "Calendar"
+msgstr "कॅलेंडर"
+
+msgid "This is the Calendar."
+msgstr "हे कॅलेंडर आहे."
+
+msgid "Start Date"
+msgstr "प्रारंभ तारीख"
+
+msgid "End Date"
+msgstr "शेवटची तारीख"
+
+msgid "Select Year"
+msgstr "वर्ष निवडा"
+
+msgid "Select Month"
+msgstr "महिना निवडा"
+
+msgid "Download Report"
+msgstr "अहवाल डाउनलोड करा"
+
+msgid "Contact"
+msgstr "संपर्क"
+
+msgid "Contact your Nearest Doctor:"
+msgstr "तुमच्या जवळच्या डॉक्टरांशी संपर्क साधा:"
+
+msgid "Contact your Nearest NGO:"
+msgstr "तुमच्या जवळच्या एन.जी.ओ शी संपर्क साधा:"
+
+msgid "Contact for site help:"
+msgstr "साइट मदतीसाठी संपर्क:"
+
+msgid "Announcements"
+msgstr "घोषणा"
+
+msgid "This is the Announcements page."
+msgstr "हे घोषणा पृष्ठ आहे."
+
+msgid "You have been logged out. Click again to confirm Log Out"
+msgstr "आपण लॉग आउट केले आहे. लॉग आउटची पुष्टी करण्यासाठी पुन्हा क्लिक करा"
+
+msgid "Plan a Visit:"
+msgstr "भेटीची योजना करा:"
+
+msgid "Select Date of Visit:"
+msgstr "भेटीची तारीख निवडा:"
+
+msgid "Select Region of Visit:"
+msgstr "भेटीचा प्रदेश निवडा:"
+
+msgid "Preference"
+msgstr "प्राधान्य"
+
+msgid "Selected Districts:"
+msgstr "निवडलेले जिल्हे:"
+
+msgid "Confirm"
+msgstr "पुष्टी"
+
+msgid "Confirmation Letter generated successfully!"
+msgstr "पुष्टीकरण पत्र यशस्वीरित्या व्युत्पन्न झाले!"
+
+msgid "View PDF"
+msgstr "पी.डी.एफ पहा"
+
+msgid "Please select a valid date of visit."
+msgstr "कृपया भेटीची वैध तारीख निवडा."
