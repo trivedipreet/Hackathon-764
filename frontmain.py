@@ -7,6 +7,8 @@ locale.setlocale(locale.LC_ALL, '')  # Set the default locale
 import sqlite3
 import hashlib
 
+global user_role
+user_role = None
 
 '''def load_translations(lang):
     localedir = os.path.join(os.path.dirname(__file__), 'locales')
@@ -38,52 +40,52 @@ def register_regular_patient():
 
     pass
 
-# Define a function for handling registration of doctors
-def register_doctor():
-    # Your code for handling registration of doctors goes here
-    st.subheader("Doctor Sign Up")
-    st.write("Sign Up as a Doctor")
+# # Define a function for handling registration of doctors
+# def register_doctor():
+#     # Your code for handling registration of doctors goes here
+#     st.subheader("Doctor Sign Up")
+#     st.write("Sign Up as a Doctor")
 
-    user_name = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    confirm_password = st.text_input("Confirm Password", type="password")
+#     user_name = st.text_input("Username")
+#     password = st.text_input("Password", type="password")
+#     confirm_password = st.text_input("Confirm Password", type="password")
 
-    if st.button("Sign Up", key="doctor_register_button"):
-        # Check if any field is empty
-        if not user_name or not password or not confirm_password:
-            st.error("Please fill in all fields.")
-        # Check if the password and confirm password match
-        elif password != confirm_password:
-            st.error("Passwords do not match!")
-        else:
-            # Perform doctor registration
-            # Your code for handling doctor registration goes here
-            st.success("Doctor Registration Successful!")
+#     if st.button("Sign Up", key="doctor_register_button"):
+#         # Check if any field is empty
+#         if not user_name or not password or not confirm_password:
+#             st.error("Please fill in all fields.")
+#         # Check if the password and confirm password match
+#         elif password != confirm_password:
+#             st.error("Passwords do not match!")
+#         else:
+#             # Perform doctor registration
+#             # Your code for handling doctor registration goes here
+#             st.success("Doctor Registration Successful!")
 
-    pass
+#     pass
 
-# Define a function for handling registration of NGOs
-def register_ngo():
-    # Your code for handling registration of NGOs goes here
-    st.subheader("NGO Sign Up")
-    st.write("Sign Up as an NGO")
+# # Define a function for handling registration of NGOs
+# def register_ngo():
+#     # Your code for handling registration of NGOs goes here
+#     st.subheader("NGO Sign Up")
+#     st.write("Sign Up as an NGO")
 
-    user_name = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    confirm_password = st.text_input("Confirm Password", type="password")
+#     user_name = st.text_input("Username")
+#     password = st.text_input("Password", type="password")
+#     confirm_password = st.text_input("Confirm Password", type="password")
 
-    if st.button("Sign Up", key="ngo_register_button"):
-        # Check if any field is empty
-        if not user_name or not password or not confirm_password:
-            st.error("Please fill in all fields.")
-        # Check if the password and confirm password match
-        elif password != confirm_password:
-            st.error("Passwords do not match!")
-        else:
-            # Perform NGO registration
-            # Your code for handling NGO registration goes here
-            st.success("NGO Registration Successful!")
-    pass
+#     if st.button("Sign Up", key="ngo_register_button"):
+#         # Check if any field is empty
+#         if not user_name or not password or not confirm_password:
+#             st.error("Please fill in all fields.")
+#         # Check if the password and confirm password match
+#         elif password != confirm_password:
+#             st.error("Passwords do not match!")
+#         else:
+#             # Perform NGO registration
+#             # Your code for handling NGO registration goes here
+#             st.success("NGO Registration Successful!")
+#     pass
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -104,7 +106,6 @@ def check_user_credentials(username, password):
     conn.close()
 
     return result
-
 
 def show_get_started_popup():
     greetings = ["Hello", "नमस्ते", "નમસ્તે", "வணக்கம்", "ಹಲೋ", "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", "ନମସ୍କାର"]
@@ -128,22 +129,8 @@ def show_get_started_popup():
         time.sleep(1)  # Faster transition between greetings
         greeting_placeholder.empty()  # Clear the previous greeting before displaying the next
 
-def show_tabs():
-    st.subheader("Welcome!")
-    st.write("Create an Account or Log In to Existing Account")
-
-    tabs = ["Sign Up", "Sign In"]
-    selected_tab = st.selectbox("Sign Up/Sign In", tabs)
-
-    if selected_tab == "Sign Up":
-        show_register_page()
-    elif selected_tab == "Sign In":
-        show_login_page()
-    print("Exiting show tabs")    
-
-
 # Helper function to insert user data into the database
-def insert_user_data(username, password, age, gender, email=''):
+def insert_user_data(user_name, password, age, gender, contact):
     # Connect to the SQLite database
     conn = sqlite3.connect('Backend/PeriodTracker.db')
     cursor = conn.cursor()
@@ -152,15 +139,13 @@ def insert_user_data(username, password, age, gender, email=''):
     hashed_password = hash_password(password)
 
     # Insert user data into the 'user' table
-    query = "INSERT INTO user (name, password, age, gender, email) VALUES (?, ?, ?, ?, ?)"
-    cursor.execute(query, (username, hashed_password, age, gender, email))
+    query = "INSERT INTO user (name, password, age, gender, contact) VALUES (?, ?, ?, ?, ?)"
+    cursor.execute(query, (user_name, password, age, gender, contact))
 
     conn.commit()
     conn.close()
 
-
-
-def show_register_page():
+def show_user_register_page():
     st.subheader("Sign Up")
     st.write("Sign Up if you do not already have an account")
 
@@ -168,9 +153,12 @@ def show_register_page():
     user_name = st.text_input("Username")
     password = st.text_input("Password", type="password")
     confirm_password = st.text_input("Confirm Password", type="password")
+    
+    #AARYA ADD REGION HERE
+
     age = st.number_input("Age", min_value=1, max_value=150, value=18)
     gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-    email = st.text_input("Email (optional)")
+    contact = st.number_input("Contact Number")
 
     if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
@@ -181,25 +169,11 @@ def show_register_page():
             st.error("Passwords do not match!")
         else:
             # Process the registration form
-            insert_user_data(user_name, password, age, gender, email)
+            insert_user_data(user_name, password, age, gender, contact)
             st.success("Registration Successful!")
             st.session_state.register_completed = True
 
-def show_register_options():
-    st.subheader("Sign Up")
-    st.write("Choose the option that best describes you:")
-
-    register_options = ["Regular Patient", "Doctor", "NGO"]
-    selected_option = st.selectbox("Select Role", register_options)
-
-    if selected_option == "Regular Patient":
-        register_regular_patient()
-    elif selected_option == "Doctor":
-        register_doctor()
-    elif selected_option == "NGO":
-        register_ngo()
-
-def show_login_page():
+def show_user_login_page():
     # Implement the login page here
     st.subheader("Sign In")
     st.write("Sign In if you already have an account:")
@@ -220,17 +194,199 @@ def show_login_page():
                 
             else:
                 st.error("Invalid username or password.")
-                
 
-# if __name__ == '__main__':
-#     # The table creation code is executed when importing database_creation.py
-#     # No need for additional function calls
+#
 
-#     # Run the Streamlit app
-#     show_login_page()
+def insert_doctor_data(user_name, password, qualification, reg_no, age, gender, contact):
+    # Connect to the SQLite database
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    cursor = conn.cursor()
+
+    # Hash the password before inserting into the database
+    hashed_password = hash_password(password)
+
+    # Insert user data into the 'doctor' table
+    query = "INSERT INTO doctor (name, password, qualification, reg_no, age, gender, contact) VALUES (?, ?, ?, ? ,? ,? ,?)"
+    cursor.execute(query, (user_name, hashed_password, qualification, reg_no, age, gender, contact))
+
+    conn.commit()
+    conn.close()
+
+def show_doctor_register_page():
+    st.subheader("Sign Up")
+    st.write("Sign Up if you do not already have an account")
+
+    # Add the registration form here
+    user_name = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    confirm_password = st.text_input("Confirm Password", type="password")
+    qualification = st.text_input("Qualification")
+
+    #AARYA ADD REGION HERE
+
+    age = st.number_input("Age", min_value=1, max_value=150, value=18)
+    gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+    contact = st.number_input("Contact Number")
+    reg_no = st.number_input("Registration Number")
+
+    if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
+        # Check if any field is empty
+        if not user_name or not password or not confirm_password or not qualification or not reg_no or not age or not gender:
+            st.error("Please fill in all required fields.")
+        # Check if the password and confirm password match
+        elif password != confirm_password:
+            st.error("Passwords do not match!")
+        else:
+            # Process the registration form
+            insert_doctor_data(user_name, password, qualification, reg_no, age, gender, contact)
+            st.success("Registration Successful!")
+            st.session_state.register_completed = True
+
+def check_doctor_credentials(username, password):
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    cursor = conn.cursor()
+
+    # Hash the password before checking against the database
+    hashed_password = hash_password(password)
+
+    # Check if the username and hashed password exist in the database
+    query = "SELECT name FROM doctor WHERE name=? AND password=?"
+    cursor.execute(query, (username, hashed_password))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    return result
+
+# Function to display the doctor login page
+def show_doctor_login_page():
+    st.subheader("Doctor Sign In")
+    st.write("Sign In if you are a registered doctor:")
+    doctor_id = st.text_input("Doctor ID")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Sign In", key="doctor_signin_button"):
+        if not doctor_id or not password:
+            st.error("Please fill in all fields.")
+        else:
+            result = check_doctor_credentials(doctor_id, password)
+
+            if result is not None:
+                st.success("Login successful!")
+                st.session_state.doctor_login_completed = True
+                # Add other doctor-specific functionalities here
+            else:
+                st.error("Invalid Doctor ID or password.")
 
 
-def show_home_tab():
+def insert_ngo_data(user_name, password, reg_no, contact):
+    # Connect to the SQLite database
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    cursor = conn.cursor()
+
+    # Hash the password before inserting into the database
+    hashed_password = hash_password(password)
+
+    # Insert user data into the 'user' table
+    query = "INSERT INTO ngo (name, password, reg_no, contact) VALUES (?, ?, ?, ?)"
+    cursor.execute(query, (user_name, password, reg_no, contact))
+
+    conn.commit()
+    conn.close()
+
+def show_ngo_register_page():
+    st.subheader("Sign Up")
+    st.write("Sign Up if you do not already have an account")
+
+    # Add the registration form here
+    user_name = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    confirm_password = st.text_input("Confirm Password", type="password")
+    
+    #AARYA ADD REGION HERE
+
+    reg_no = st.number_input("Registration Number")
+    
+    contact = st.number_input("Contact Number")
+
+    if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
+        # Check if any field is empty
+        if not user_name or not password or not confirm_password or not reg_no or not contact:
+            st.error("Please fill in all required fields.")
+        # Check if the password and confirm password match
+        elif password != confirm_password:
+            st.error("Passwords do not match!")
+        else:
+            # Process the registration form
+            insert_ngo_data(user_name, password, reg_no, contact)
+            st.success("Registration Successful!")
+            st.session_state.register_completed = True
+
+def check_ngo_credentials(username, password):
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    cursor = conn.cursor()
+
+    # Hash the password before checking against the database
+    hashed_password = hash_password(password)
+
+    # Check if the username and hashed password exist in the database
+    query = "SELECT name FROM ngo WHERE id=? AND password=?"
+    cursor.execute(query, (username, hashed_password))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    return result
+
+# Function to display the NGO login page
+def show_ngo_login_page():
+    st.subheader("NGO Sign In")
+    st.write("Sign In if you are a registered NGO:")
+    ngo_id = st.text_input("NGO ID")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Sign In", key="ngo_signin_button"):
+        if not ngo_id or not password:
+            st.error("Please fill in all fields.")
+        else:
+            result = check_ngo_credentials(ngo_id, password)
+
+            if result is not None:
+                st.success("Login successful!")
+                st.session_state.ngo_login_completed = True
+                # Add other NGO-specific functionalities here
+            else:
+                st.error("Invalid NGO ID or password.")
+
+def show_tabs():
+    st.subheader("Welcome!")
+    st.write("Create an Account or Log In to Existing Account")
+
+    # Add a selection box for choosing the user role (doctor, NGO, or user)
+    user_role = st.selectbox("Select User Role", ["User", "Doctor", "NGO" ])
+
+    tabs = ["Sign Up", "Sign In"]
+    selected_tab = st.selectbox("Sign Up/Sign In", tabs)
+
+    if selected_tab == "Sign Up":
+        # Show the registration page based on the selected role
+        if user_role == "Doctor":
+            show_doctor_register_page()
+        elif user_role == "NGO":
+            show_ngo_register_page()
+        else:
+            show_user_register_page()
+    elif selected_tab == "Sign In":
+        # Show the login page based on the selected role
+        if user_role == "Doctor":
+            show_doctor_login_page()
+        elif user_role == "NGO":
+            show_ngo_login_page()
+        else:
+            show_user_login_page()
+    print("Exiting show tabs")
+
+def show_user_tab():
     # Implement the Home tab here
 
     # Add the hamburger menu with options
@@ -272,6 +428,13 @@ def show_home_tab():
         st.session_state.login_completed = False
         st.write("You have been logged out. Click 'Get Started' to sign in or sign up again.")
 
+def show_doctor_tab():
+    st.write("Doctor Dashboard")
+    # Add doctor-specific functionalities here
+
+def show_ngo_tab():
+    st.write("NGO Dashboard")
+    # Add NGO-specific functionalities here
 
 def main():
     '''lang = st.selectbox("Select Language", ["English", "Hindi"])
@@ -315,8 +478,15 @@ def main():
         show_get_started_popup()
     elif not st.session_state.register_completed and not st.session_state.login_completed:
         show_tabs()
-    if st.session_state.register_completed or st.session_state.login_completed:
-        show_home_tab()  # Call show_home_tab() directly here
+    elif st.session_state.register_completed or st.session_state.login_completed:
+        if user_role == "user":
+            show_user_tab()
+        elif user_role == "doctor":
+            show_doctor_tab()
+        elif user_role == "ngo":
+            show_ngo_tab()
+        else:
+            st.error("Invalid user type.")  # Call show_home_tab() directly here
     #this if was elif if theres a glitch
 
 if __name__ == "__main__":
