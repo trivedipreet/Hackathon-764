@@ -1,3 +1,4 @@
+from __future__ import annotations
 import streamlit as st
 import time
 #import gettext
@@ -6,13 +7,20 @@ import locale
 import datetime
 import sqlite3
 import hashlib
+
+
 locale.setlocale(locale.LC_ALL, '')  # Set the default locale
 
 #global user_role
 user_role = None
 
 '''def load_translations(lang):
-    localedir = os.path.join(os.path.dirname(__file__), 'locales')
+    #localedir = os.path.join(os.path.dirname(__file__), 'locales')
+    # Get the absolute path of the current script
+    #script_path = os.path.abspath(__file__)
+    # Construct the absolute path of the 'locales' directory based on the script path
+    localedir = os.path.join(os.path.dirname(script_path), 'locales')
+
     translation = gettext.translation('messages', localedir=localedir, languages=[lang])
     translation.install()
     return translation'''
@@ -63,7 +71,7 @@ def register_regular_patient():
         else:
             # Perform regular patient registration
             # Your code for handling regular patient registration goes here
-            st.success("Regular Patient Registration Successful!")
+            st.success("Regular Patient Registration Successful! Click again to continue")
 
     pass
 
@@ -104,7 +112,7 @@ def show_get_started_popup():
         st.session_state.doctor_register_completed = False
         st.session_state.doctor_login_completed = False
         st.session_state.ngo_login_completed = False
-        
+
         show_tabs()
 
     # Simulate continuous loop of greetings
@@ -188,7 +196,7 @@ def show_user_register_page():
         else:
             # Process the registration form
             insert_user_data(user_name, password, age, gender, contact)
-            st.success("Registration Successful!")
+            st.success("Registration Successful! Click again to continue")
             st.session_state.register_completed = True
 
 
@@ -208,7 +216,7 @@ def show_user_login_page():
             result = check_user_credentials(user_name2, password2)
 
             if result is not None:
-                st.success("Login successful!")
+                st.success("Login successful! Click again to continue")
                 st.session_state.login_completed = True
                 
             else:
@@ -256,7 +264,7 @@ def show_doctor_register_page():
         else:
             # Process the registration form
             insert_doctor_data(user_name, password, qualification, reg_no, age, gender, contact)
-            st.success("Registration Successful!")
+            st.success("Registration Successful! Click again to continue")
             st.session_state.doctor_register_completed = True
             st.session_state.register_completed = True
 
@@ -290,7 +298,7 @@ def show_doctor_login_page():
             result = check_doctor_credentials(doctor_id, password)
 
             if result is not None:
-                st.success("Login successful!")
+                st.success("Login successful! Click again to continue")
                 st.session_state.login_completed = True
                 st.session_state.doctor_login_completed = True
                 # Add other doctor-specific functionalities here
@@ -338,7 +346,7 @@ def show_ngo_register_page():
         else:
             # Process the registration form
             insert_ngo_data(user_name, password, reg_no, contact)
-            st.success("Registration Successful!")
+            st.success("Registration Successful! Click again to continue")
             st.session_state.register_completed = True
             st.session_state.ngo_register_completed = True
 
@@ -372,7 +380,7 @@ def show_ngo_login_page():
             result = check_ngo_credentials(ngo_id, password)
 
             if result is not None:
-                st.success("Login successful!")
+                st.success("Login successful! Click again to continue")
                 st.session_state.login_completed = True
                 st.session_state.ngo_login_completed = True
                 # Add other NGO-specific functionalities here
