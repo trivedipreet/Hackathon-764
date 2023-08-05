@@ -3,7 +3,7 @@ import sqlite3
 conn = sqlite3.connect('Backend\PeriodTracker.db') #database path
 cur = conn.cursor()
 
-def region_rec(type):
+def reg_recommender(type):
     '''
     takes 'doctor' or 'ngo' as argument
     returns list of regions
