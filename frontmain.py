@@ -11,7 +11,7 @@ import pandas as pd
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
-
+import pandas as pd
 
 
 locale.setlocale(locale.LC_ALL, '')  # Set the default locale
@@ -117,22 +117,7 @@ def register_regular_patient():
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-def check_user_credentials(username, password):
-    # Connect to the SQLite database
-    conn = sqlite3.connect('Backend/PeriodTracker.db')
-    cursor = conn.cursor()
 
-    # Hash the password before checking against the database
-    hashed_password = hash_password(password)
-
-    # Check if the username and hashed password exist in the database
-    query = "SELECT name FROM user WHERE name=? AND password=?"
-    cursor.execute(query, (username, hashed_password))
-    result = cursor.fetchone()
-
-    conn.close()
-
-    return result
 
 def show_get_started_popup():
     greetings = ["Hello", "नमस्ते", "નમસ્તે", "வணக்கம்", "ಹಲೋ", "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", "ନମସ୍କାର"]
@@ -188,10 +173,26 @@ def show_tabs():
             show_ngo_login_page()
         else:
             show_user_login_page()
-    print("Exiting show tabs")
+    
     st.session_state.user_role = user_role.lower()
     return user_role
 
+def check_user_credentials(username, password):
+    # Connect to the SQLite database
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    cursor = conn.cursor()
+
+    # Hash the password before checking against the database
+    hashed_password = hash_password(password)
+
+    # Check if the username and hashed password exist in the database
+    query = "SELECT name FROM user WHERE name=? AND password=?"
+    cursor.execute(query, (username, hashed_password))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    return result
 
 # Helper function to insert user data into the database
 def insert_user_data(username, password, age, gender, contact=''):
@@ -209,6 +210,45 @@ def insert_user_data(username, password, age, gender, contact=''):
     conn.commit()
     conn.close()
 
+def get_data_from_db():
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    query = "SELECT District FROM regionInfo"
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df
+
+# Function to retrieve towns based on the selected district
+def get_towns(selected_district):
+    conn = sqlite3.connect('Backend/PeriodTracker.db')
+    query = f"SELECT Name FROM regionInfo WHERE District='{selected_district}'"
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df['Name'].unique()
+
+def Button():
+    st.title("")
+    
+    # Retrieve data from the database and store it in a DataFrame
+    df = get_data_from_db()
+
+    # Get unique districts from the DataFrame
+    unique_districts = df['District'].unique()
+
+    # Select the district using a dropdown
+    selected_district = st.selectbox('Select a district', unique_districts)
+
+    # Get the towns based on the selected district
+    towns = get_towns(selected_district)
+
+    # Select the town using a second dropdown
+    selected_town = st.selectbox('Select a town', towns)
+
+    # Display the selected district and town
+    # st.write("Selected District:", selected_district)
+    # st.write("Selected Town:", selected_town)
+    return selected_town
+
+
 def show_user_register_page():
     st.subheader("Sign Up")
     st.write("Sign Up if you do not already have an account")
@@ -218,11 +258,12 @@ def show_user_register_page():
     password = st.text_input("Password", type="password")
     confirm_password = st.text_input("Confirm Password", type="password")
     
-    #AARYA ADD REGION HERE
-
+    
+    
     age = st.number_input("Age", min_value=1, max_value=150, value=18)
-    gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-    contact = st.number_input("Contact Number")
+    gender = st.selectbox("Gender", ["Female", "Other", "Male"])
+    region = Button()
+    contact = st.number_input("Contact Number", step=1, format="%d")
 
     if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
@@ -289,8 +330,8 @@ def show_doctor_register_page():
 
     age = st.number_input("Age", min_value=1, max_value=150, value=18)
     gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-    contact = st.number_input("Contact Number")
-    reg_no = st.number_input("Registration Number")
+    contact = st.number_input("Contact Number", step=1, format="%d")
+    reg_no = st.number_input("Registration Number", step=1, format="%d")
 
     if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
@@ -370,9 +411,9 @@ def show_ngo_register_page():
     
     #AARYA ADD REGION HERE
 
-    reg_no = st.number_input("Registration Number")
+    reg_no = st.number_input("Registration Number", step=1, format="%d")
     
-    contact = st.number_input("Contact Number")
+    contact = st.number_input("Contact Number", step=1, format="%d")
 
     if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
@@ -671,13 +712,14 @@ def show_user_tab():
         
     elif selected_option == "Download Report":
         # Display History content here
-        st.title(("History"))
-        st.write("This is the History.")
+        st.title(("Download Report"))
+        st.write("You can Download report here.")
     
     elif selected_option == "Contact":
         # Display Contact content here
-        st.title("Contact your Nearest Doctor: ")
-        st.title("Contact your Nearest NGO: ")
+        #st.title("Contact your Nearest Doctor: ")
+        st.title("Helpline Numbers: ")
+        st.write("Maharashtra Women Helpline: 022-26111103, 1298 , 103")
         st.title("Contact for site help: ")
         st.write("rujutabudke@gmail.com")
         st.write("aaryakkw@gmail.com")
@@ -862,12 +904,12 @@ def main():
 
         # Check if registration or login is completed and user_role is set, show the respective dashboard
         if (st.session_state.register_completed or st.session_state.login_completed) and st.session_state.user_role:
-            print("some")
+            
             if st.session_state.user_role == "user":
-                print("user")
+                
                 show_user_tab()
             elif st.session_state.user_role == "doctor" and (st.session_state.doctor_login_completed or st.session_state.doctor_register_completed) :  # Check doctor_login_completed
-                print("doc")
+                
                 show_doctor_tab()
             elif st.session_state.user_role == "ngo" and (st.session_state.ngo_login_completed or st.session_state.ngo_register_completed) :  # Check ngo_login_completed
                 show_ngo_tab()
@@ -876,3 +918,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
