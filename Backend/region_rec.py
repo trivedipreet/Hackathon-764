@@ -48,6 +48,17 @@ def region_rec(type, id):
 
     return regions
 
+
+def update_visit(type, region, date):
+    if type == 'doctor':
+        cur.execute("UPDATE regionInfo SET doctor_count = doctor_count + 1 WHERE name = ?",(region,))
+        cur.execute("UPDATE regionInfo SET doctor_visit = ? WHERE name = ?",(date, region))
+    elif type == 'ngo':
+        cur.execute("UPDATE regionInfo SET ngo_count = ngo_count + 1 WHERE name = ?",(region,))
+        cur.execute("UPDATE regionInfo SET ngo_visit = ? WHERE name = ?",(date, region))
+    conn.commit()
+
+
 #take 3 regions and update
 def update_region(type, id, region, region2, region3):
     if type == 'doctor':
@@ -56,15 +67,12 @@ def update_region(type, id, region, region2, region3):
         cur.execute("UPDATE ngo SET region = ?, region2 = ?, region3 = ? WHERE  id = ? ", (region, region2, region3, id))
     conn.commit()
 
-
-def update_visit(type, region, date):
-    if type == 'doctor':
-        cur.execute("UPDATE regionInfo SET doctor_count = doctor_count + 1 WHERE name = ?",(region,))
-        cur.execute("UPDATE regionInfo SET doctor_visit = ? WHERE name = ?",(date, region))
-    elif type == 'ngo':
-        cur.execute("UPDATE regionInfo SET ngo_count = ngo_count + 1 WHERE name = ?",(region,))
-        cur.execute("UPDATE regionInfo SET doctor_visit = ? WHERE name = ?",(date, region))
+    lst = region_rec(type, id)
+    print(lst)
+    
+    #doctor/ngo picks region, date
+    update_visit(type, 'FRONTEND', 'FRONTEND')
 
 
-update_region_db('doctor', 'D4360', 'Pune', 'Yavatmal', 'Satara')
-update_region_db('ngo', 'N5389', 'Sangli', 'Thane', 'Bid')
+update_region('doctor', 'D4360', 'Pune', 'Yavatmal', 'Satara')
+#update_visit('ngo', 'Pirangut', '2023-10-24')
