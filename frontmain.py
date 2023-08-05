@@ -574,6 +574,8 @@ def show_user_tab():
         start_date = st.date_input("Start Date", st.session_state.start_date)
         end_date = st.date_input("End Date", st.session_state.end_date)
 
+    
+
         # Update session state variables when dates are changed
         st.session_state.start_date = start_date
         st.session_state.end_date = end_date
@@ -582,7 +584,7 @@ def show_user_tab():
         current_year, current_month = today.year, today.month
         
         # Get the selected year and month from the user
-        selected_year = st.selectbox("Select Year", list(range(1960, 2101)), index=current_year - 1900)
+        selected_year = st.selectbox("Select Year", list(range(1960, 2031)), index=(current_year - 1960))
         selected_month = st.selectbox("Select Month", [datetime.date(2000, m, 1).strftime("%B") for m in range(1, 13)], index=current_month - 1)
 
         # Convert month name to numeric value
@@ -610,30 +612,84 @@ def show_user_tab():
         end_date_str = end_date.strftime("%Y-%m-%d")
         fertile_cycle_start_str = fertile_cycle_start.strftime("%Y-%m-%d")
         fertile_cycle_end_str = fertile_cycle_end.strftime("%Y-%m-%d")
+        ######AARYA
+        with sqlite3.connect('PeriodTracker.db') as conn:
+    
+        #conn = sqlite3.connect('PeriodTracker.db') #database path
+         cur = conn.cursor()
+         userid = 1
+         query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
+         df = pd.read_sql_query(query, conn)
+        
 
+        start_array = df['Start'].to_numpy()
+        end_array = df['End'].to_numpy()
+        fertile_start_array = end_array
+        st.write(start_array)
+
+        for i in range(len(end_array)):
+            input_format = "%Y-%m-%d"
+            STARTOFi = datetime.datetime.strptime(start_array[i], input_format).date()
+            ENDOFi = datetime.datetime.strptime(end_array[i], input_format).date()
+            abs_days = (abs(STARTOFi - ENDOFi)).days
+            HALF = round(abs_days/2)
+            FERTILEOFi = ENDOFi + datetime.timedelta(days = HALF)
+
+            fertile_start_array[i] = FERTILEOFi.strftime("%Y-%m-%d")
+
+
+        # st.write("End array:", end_array)
+        # st.write("Fertile array:", fertile_start_array)
+
+
+        ######AARYA
+        
+
+
+        date_time_array = [start_date_str]
 
         for week in calendar:
             for day in week:
                 if day == "":
                     calendar_html += "<div class='empty'></div>"
                 else:
+    
                     date_str = f"{selected_year}-{selected_month_number:02d}-{day:02d}"
-                    is_start_date = date_str == start_date_str
-                    is_end_date = date_str == end_date_str
-                    if start_date_str <= date_str <= end_date_str:
-                        if fertile_cycle_start_str <= date_str <= fertile_cycle_end_str:
-                            calendar_html += f"<div class='date fertile'>{day}</div>"
-                            continue
-                    # Check if the current date is between the start and end dates
-                    is_between_dates = start_date <= datetime.date(selected_year, selected_month_number, day) <= end_date
+                
+                    for i in range(len(end_array)):
+                     is_start_date = date_str ==  start_array[i]
+                     is_end_date = date_str == end_array[i]
+                     is_between_dates = start_array[i] < date_str < end_array[i]
+                     is_fertile_date =  fertile_start_array[i] == date_str
+                  
+                     if (is_start_date == True):
+                         break
+                     if (is_between_dates == True):
+                         break
+                     if (is_end_date == True):
+                         break
+                     if (is_fertile_date == True):
+                         break
 
+                     
+                     # Check if the current date is between the start and end dates
+       
+     
+               
+
+                    # Check if the current date is between the start and end dates
+                   
                     classes = "date"
                     if is_start_date:
+                   
                         classes += " start"
                     if is_end_date:
                         classes += " end"
                     if is_between_dates:
                         classes += " between"
+                    if is_fertile_date:
+                        classes += " fertile"
+
 
                     calendar_html += f"<div class='{classes}' onclick='selectDate(this)'>{day}</div>"
                 
@@ -689,7 +745,7 @@ def show_user_tab():
             background-color: red;
         }
 
-        .fertile {
+        .date.fertile {
             background-color: blue;
         }
         .empty {
