@@ -52,5 +52,68 @@ def log_regression(list1):
     print(cm)
     print(accuracy_score(y_test, y_pred))
 
+list2=[]
+    
+for i in range(0,14):
+        if i == 0:
+            try:
+                inp = int(input("Enter age:"))
+                list2.append(inp)
+            except ValueError:
+                print("Error: Please enter a valid age.")
+        elif(i==1):
+            try:
+                inp=int(input("Enter weight:"))
+                list2.append(inp)
+            except ValueError:
+                print("Error: Please enter a valid weight.")
 
-log_regression([21,50,155,4,9,0,0,1,0,1,1,1,1,0])
+        elif(i==2):
+            try:
+                inp=int(input("Enter height:"))
+                list2.append(inp)
+            except ValueError:
+                print("Error: Please enter a valid height.")
+        elif(i==3):
+                inp=int(input("Enter cycle(2-r,4-i):"))
+                list2.append(inp)
+        elif(i==4):
+            try:
+                inp=int(input("Enter cycle length:"))
+                list2.append(inp)
+            except ValueError:
+                print("Error: Please enter a valid cycle length.")
+        elif(i==5):
+            try:
+                inp=int(input("Enter no. of abortions:"))
+                list2.append(inp)
+            except ValueError:
+                print("Error: Please enter a valid number.")
+        elif(i==6):
+            inp=int(input("pregnant:(0/1)"))
+            list2.append(inp)
+        elif(i==7):
+            inp=int(input("weigth gain(0/1):"))
+            list2.append(inp)
+        elif(i==8):
+            inp=int(input("hair growth(0/1)"))
+            list2.append(inp)
+        elif(i==9):
+            inp=int(input("skin darkening(0/1)"))
+            list2.append(inp)
+        elif(i==10):
+            inp=int(input("hair loss(0/1)"))
+            list2.append(inp)
+        elif(i==11):
+            inp=int(input("pimples(0/1):"))
+            list2.append(inp)
+        elif(i==12):
+            inp=int(input("fast food(0/1):"))
+            list2.append(inp)
+        elif(i==13):
+            inp=int(input("exercise (0/1):"))
+            list2.append(inp)
+
+
+#log_regression([21,50,155,4,9,0,0,1,0,1,1,1,1,0])
+log_regression(list2)
