@@ -764,6 +764,9 @@ def show_doctor_tab():
         selected_district2 = st.selectbox('**Preference 2**', unique_districts)
         selected_district3 = st.selectbox('**Preference 3**', unique_districts)
         st.write("**Selected Districts:**", selected_district1,", ", selected_district2,", ",selected_district3)
+        st.write("**Please select a region from the suggested set of regions**")
+        ### add region
+        
         if st.button("Confirm"):
             if start_date:
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
@@ -918,4 +921,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
