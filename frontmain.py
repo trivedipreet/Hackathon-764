@@ -12,8 +12,10 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import pandas as pd
+from session_state import SessionState
+import random
 
-
+session_state = SessionState(current_id=None)
 locale.setlocale(locale.LC_ALL, '')  # Set the default locale
 
 #global user_role
@@ -191,8 +193,13 @@ def check_user_credentials(username, password):
     result = cursor.fetchone()
 
     conn.close()
-
-    return result
+    if result:
+        # Extract the 'id' from the fetched row and store it in a variable
+        id = result[0] 
+        st.session_state.id = id # Assuming the 'id' column is the first one in the table
+        return id
+    else:
+        return None
 
 # Helper function to insert user data into the database
 def insert_user_data(username, password, age, gender, contact=''):
@@ -202,10 +209,13 @@ def insert_user_data(username, password, age, gender, contact=''):
 
     # Hash the password before inserting into the database
     hashed_password = hash_password(password)
+    uid = "U"+str(random.randint(1000,9999))
 
     # Insert user data into the 'user' table
-    query = "INSERT INTO user (name, password, age, gender, contact) VALUES (?, ?, ?, ?, ?)"
-    cursor.execute(query, (username, hashed_password, age, gender, contact))
+    query = "INSERT INTO user (id, name, password, age, gender, contact) VALUES (? ,?, ?, ?, ?, ?)"
+    cursor.execute(query, (uid, username, hashed_password, age, gender, contact))
+
+    st.session_state.id = id
 
     conn.commit()
     conn.close()
@@ -308,11 +318,17 @@ def insert_doctor_data(user_name, password, qualification, reg_no, age, gender, 
 
     # Hash the password before inserting into the database
     hashed_password = hash_password(password)
+    did = "D"+str(random.randint(1000,9999))
 
     # Insert user data into the 'doctor' table
-    query = "INSERT INTO doctor (name, password, qualification, reg_no, age, gender, contact) VALUES (?, ?, ?, ? ,? ,? ,?)"
-    cursor.execute(query, (user_name, hashed_password, qualification, reg_no, age, gender, contact))
+    query = "INSERT INTO doctor (id, name, password, qualification, reg_no, age, gender, contact) VALUES (?, ?, ?, ?, ? ,? ,? ,?)"
+    cursor.execute(query, (did, user_name, hashed_password, qualification, reg_no, age, gender, contact))
+  
 
+    
+    
+    st.session_state.id = did
+    print(st.session_state.id," in doctor register")
     conn.commit()
     conn.close()
 
@@ -325,6 +341,14 @@ def show_doctor_register_page():
     password = st.text_input("Password", type="password")
     confirm_password = st.text_input("Confirm Password", type="password")
     qualification = st.text_input("Qualification")
+    df = get_data_from_db()
+
+    unique_districts = df['District'].unique()
+
+    # Select the district using a dropdown
+    selected_district1 = st.selectbox('Region 1', unique_districts)
+    selected_district2 = st.selectbox('Region 2', unique_districts)
+    selected_district3 = st.selectbox('Region 3', unique_districts)
 
     #AARYA ADD REGION HERE
 
@@ -355,13 +379,19 @@ def check_doctor_credentials(username, password):
     hashed_password = hash_password(password)
 
     # Check if the username and hashed password exist in the database
-    query = "SELECT name FROM doctor WHERE name=? AND password=?"
+    query = "SELECT * FROM doctor WHERE name=? AND password=?"
     cursor.execute(query, (username, hashed_password))
     result = cursor.fetchone()
 
     conn.close()
 
-    return result
+    if result:
+        # Extract the 'id' from the fetched row and store it in a variable
+        doctor_id = result[0] 
+        st.session_state.id = doctor_id # Assuming the 'id' column is the first one in the table
+        return doctor_id
+    else:
+        return None
 
 # Function to display the doctor login page
 def show_doctor_login_page():
@@ -392,11 +422,13 @@ def insert_ngo_data(user_name, password, reg_no, contact):
 
     # Hash the password before inserting into the database
     hashed_password = hash_password(password)
+    nid = "N"+str(random.randint(1000,9999))
 
     # Insert user data into the 'user' table
-    query = "INSERT INTO ngo (name, password, reg_no, contact) VALUES (?, ?, ?, ?)"
-    cursor.execute(query, (user_name, password, reg_no, contact))
-
+    query = "INSERT INTO ngo (id, name, password, reg_no, contact) VALUES (?, ?, ?, ?, ?)"
+    cursor.execute(query, (nid, user_name, password, reg_no, contact))
+    
+    st.session_state.id = nid
     conn.commit()
     conn.close()
 
@@ -408,7 +440,15 @@ def show_ngo_register_page():
     user_name = st.text_input("Username")
     password = st.text_input("Password", type="password")
     confirm_password = st.text_input("Confirm Password", type="password")
-    
+    df = get_data_from_db()
+
+    unique_districts = df['District'].unique()
+
+    # Select the district using a dropdown
+    selected_district1 = st.selectbox('Region 1', unique_districts)
+    selected_district2 = st.selectbox('Region 2', unique_districts)
+    selected_district3 = st.selectbox('Region 3', unique_districts)
+
     #AARYA ADD REGION HERE
 
     reg_no = st.number_input("Registration Number", step=1, format="%d")
@@ -437,13 +477,19 @@ def check_ngo_credentials(username, password):
     hashed_password = hash_password(password)
 
     # Check if the username and hashed password exist in the database
-    query = "SELECT name FROM ngo WHERE id=? AND password=?"
+    query = "SELECT * FROM ngo WHERE name=? AND password=?"
     cursor.execute(query, (username, hashed_password))
     result = cursor.fetchone()
 
     conn.close()
 
-    return result
+    if result:
+        # Extract the 'id' from the fetched row and store it in a variable
+        id = result[0] 
+        st.session_state.id = id # Assuming the 'id' column is the first one in the table
+        return id
+    else:
+        return None
 
 # Function to display the NGO login page
 def show_ngo_login_page():
@@ -481,6 +527,7 @@ def show_user_tab():
     if selected_option == "Dashboard":
         # Display Dashboard content here
         st.title("Dashboard")
+        st.write("welcome ",st.session_state.id)
         st.title("Your Period is expected to arrive in X days.")
         st.write("This is your Dashboard.")
         
@@ -740,7 +787,49 @@ def show_user_tab():
             st.session_state.login_completed = False
             st.write("You have been logged out. Click again to confirm Log Out")
 
+
+def insert_doctor_regions(region1, region2, region3, doctor_id):
+    """
+    Insert the three regions into the 'doctor' table for the specified doctor.
+
+    Parameters:
+        region1 (str): The first region preference.
+        region2 (str): The second region preference.
+        region3 (str): The third region preference.
+        doctor_id (str): The ID of the doctor for whom the regions are being inserted.
+
+    Returns:
+        bool: True if the insertion is successful, False otherwise.
+    """
+    try:
+        # Connect to the database (or create if not exists)
+        conn = sqlite3.connect('Backend/PeriodTracker.db')
+        cur = conn.cursor()
+
+        # Define the SQL query for updating the regions in the doctor table
+        update_query = """UPDATE doctor
+                          SET region = ?, region2 = ?, region3 = ?
+                          WHERE id = ?"""
+
+        # Execute the query with the provided data
+        cur.execute(update_query, (region1, region2, region3, doctor_id))
+
+        # Commit the changes to the database
+        conn.commit()
+
+        # Close the database connection
+        conn.close()
+
+        return True
+
+    except Exception as e:
+        print("Error occurred:", e)
+        return False
+
+
+
 def show_doctor_tab():
+    print(st.session_state.id," in doctor tab")
     st.title("Doctor Viewer")
     # Add doctor-specific functionalities here
     
@@ -772,8 +861,17 @@ def show_doctor_tab():
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
                 st.success("Confirmation Letter generated successfully!")
                 st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
+           
+            
+            
+            # Call the function to insert the selected regions into the doctor table
+            
+            if insert_doctor_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
+                st.success("Regions inserted successfully!")
             else:
-                st.warning("Please select a valid date of visit.")
+                st.warning("Failed to insert regions.")
+        else:
+            st.warning("Please select a valid date of visit.")
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")
@@ -797,12 +895,51 @@ def show_doctor_tab():
 
 
 
+def insert_ngo_regions(region1, region2, region3, ngo_id):
+    """
+    Insert the three regions into the 'doctor' table for the specified doctor.
+
+    Parameters:
+        region1 (str): The first region preference.
+        region2 (str): The second region preference.
+        region3 (str): The third region preference.
+        doctor_id (str): The ID of the doctor for whom the regions are being inserted.
+
+    Returns:
+        bool: True if the insertion is successful, False otherwise.
+    """
+    try:
+        # Connect to the database (or create if not exists)
+        conn = sqlite3.connect('Backend/PeriodTracker.db')
+        cur = conn.cursor()
+
+        # Define the SQL query for updating the regions in the doctor table
+        update_query = """UPDATE ngo
+                          SET region = ?, region2 = ?, region3 = ?
+                          WHERE id = ?"""
+
+        # Execute the query with the provided data
+        cur.execute(update_query, (region1, region2, region3, ngo_id))
+
+        # Commit the changes to the database
+        conn.commit()
+
+        # Close the database connection
+        conn.close()
+
+        return True
+
+    except Exception as e:
+        print("Error occurred:", e)
+        return False
+
+
 
     
 
 def show_ngo_tab():
     st.title("NGO Viewer")
-    
+    st.write("welcome ",st.session_state.id)
     menu_options = ["Dashboard","Contact Us", "Log out"]
     selected_option = st.sidebar.radio("Menu", menu_options)
     if selected_option == "Dashboard":
@@ -828,8 +965,12 @@ def show_ngo_tab():
                 pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
                 st.success("Confirmation Letter generated successfully!")
                 st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")
+            if insert_doctor_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
+                st.success("Regions inserted successfully!")
             else:
-                st.warning("Please select a valid date of visit.")
+                st.warning("Failed to insert regions.")
+        else:
+            st.warning("Please select a valid date of visit.")
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")
