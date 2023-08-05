@@ -14,9 +14,9 @@ cur.execute("""CREATE TABLE IF NOT EXISTS regionInfo(Name TEXT PRIMARY KEY,
     District	TEXT,
     Population	TEXT,
     doctor_count INT,
-    doctor_visit DATE,
+    doctor_visit TEXT,
     ngo_count INT,
-    ngo_visit DATE)""")
+    ngo_visit TEXT)""")
 
 cur.execute("""CREATE TABLE IF NOT EXISTS user (id TEXT(5) PRIMARY KEY,
         name TEXT NOT NULL,
@@ -59,7 +59,7 @@ did = "D"+str(random.randint(1000,9999))
 nid = "N"+str(random.randint(1000,9999))
 
 #Adding data to the tables:
-
+'''
 cur.execute("""INSERT INTO user(id, name, age, gender, region, contact, password) VALUES(?,"User1", 20, 'F', "Pune", 1234567890, "password")""", (uid,))
 cur.execute("""INSERT INTO user(id, name, age, gender, region, contact, password) VALUES(?, "User2", 21, 'F', "Pune", 678904321, "password")""",(uid2,))
 
@@ -72,7 +72,7 @@ periodData = pd.read_excel('Backend\RegularCycle.xlsx', header=0)
 periodData.to_sql('periodLog', conn, if_exists='append', index=False)
 regionData = pd.read_csv('Backend\Population.csv', header=0)  
 regionData.to_sql('regionInfo', conn, if_exists='append', index=False)
-
+'''
 conn.commit()
 
 #except:
