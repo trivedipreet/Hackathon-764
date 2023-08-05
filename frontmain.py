@@ -15,7 +15,14 @@ import pandas as pd
 from region_rec import regions
 from region_rec import update_visit
 import random
+import numpy as np
+from utils import add_new_row_to_table
 from classification import log_regression
+
+
+#AARYA
+from linear_regression import PREDICT
+#AARYA
 
 
 
@@ -589,6 +596,14 @@ def show_user_tab():
         st.session_state.start_date = start_date
         st.session_state.end_date = end_date
 
+        start_date_str = start_date.strftime("%Y-%m-%d")
+        end_date_str = end_date.strftime("%Y-%m-%d")
+
+        st.button("Enter new period cycle")
+     
+
+
+
         today = datetime.date.today()
         current_year, current_month = today.year, today.month
         
@@ -617,10 +632,71 @@ def show_user_tab():
         fertile_cycle_start = end_date + datetime.timedelta(days=15)
         fertile_cycle_end = fertile_cycle_start + datetime.timedelta(days=4)
 
-        start_date_str = start_date.strftime("%Y-%m-%d")
-        end_date_str = end_date.strftime("%Y-%m-%d")
-        fertile_cycle_start_str = fertile_cycle_start.strftime("%Y-%m-%d")
-        fertile_cycle_end_str = fertile_cycle_end.strftime("%Y-%m-%d")
+
+
+        ISTHEDATEWRONG,ERRORINPRECICTION,PREDICTED = PREDICT( start_date_str, end_date_str,1)
+        st.write("Your Period is Off By")
+        st.write(ERRORINPRECICTION)
+        ######AARYA
+        with sqlite3.connect('PeriodTracker.db') as conn:
+    
+        #conn = sqlite3.connect('PeriodTracker.db') #database path
+         cur = conn.cursor()
+         userid = 1
+         query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
+         df = pd.read_sql_query(query, conn)
+        
+
+        start_array = df['Start'].to_numpy()
+        end_array = df['End'].to_numpy()
+       
+       
+        
+        
+        # if  ISTHEDATEWRONG == 0:
+        #   #if ERRORINPRECICTION < 10:
+              
+              
+        #   #else: 
+        #   #QUESTIONS
+                  
+        # else:
+        #     st.write("Please Enter a Valid Date")
+           
+        
+
+        for i in range(len(PREDICTED)):
+            #   start_array = start_array + PREDICTED[i][0]
+            #   end_array.append(PREDICTED[i][1])
+            lst = list(start_array)
+            lst.append(PREDICTED[i][0])
+            start_array = np.asarray(lst)
+
+            lst2 = list(end_array)
+            lst2.append(PREDICTED[i][1])
+            end_array = np.asarray(lst2)
+\
+           
+       
+       
+        fertile_start_array = end_array
+        for i in range(len(end_array)):
+            input_format = "%Y-%m-%d"
+            STARTOFi = datetime.datetime.strptime(start_array[i], input_format).date()
+            ENDOFi = datetime.datetime.strptime(end_array[i], input_format).date()
+            abs_days = (abs(STARTOFi - ENDOFi)).days
+            HALF = round(abs_days/2)
+            FERTILEOFi = ENDOFi + datetime.timedelta(days = HALF)
+
+            fertile_start_array[i] = FERTILEOFi.strftime("%Y-%m-%d")
+
+
+        # st.write("End array:", end_array)
+        # st.write("Fertile array:", fertile_start_array)
+
+
+        ######AARYA
+        
 
 
         for week in calendar:

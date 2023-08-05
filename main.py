@@ -10,4 +10,6 @@ from datetime import datetime, timedelta
 import sqlite3
 from linear_regression import PREDICT
 
-PREDICT()
+A,b,c = PREDICT('2022-08-08','2022-08-10',1)
+
+print(c)
