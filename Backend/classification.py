@@ -34,9 +34,10 @@ print(x_test)
 from sklearn.linear_model import LogisticRegression
 classifier = LogisticRegression(random_state = 0)
 classifier.fit(x_train, y_train)
-'''
+
 # Predicting the Test set results
 y_pred = classifier.predict(x_test)
+'''
 print(y_pred)
 print(np.concatenate((y_pred.reshape(len(y_pred),1), y_test.reshape(len(y_test),1)),1))
 '''
@@ -49,4 +50,4 @@ print(classifier.predict(sc.transform([[21,50,155,4,9,0,0,1,0,1,1,1,1,0]])))
 from sklearn.metrics import confusion_matrix, accuracy_score
 cm = confusion_matrix(y_test, y_pred)
 print(cm)
-accuracy_score(y_test, y_pred)
+print(accuracy_score(y_test, y_pred))
