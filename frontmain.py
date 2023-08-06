@@ -591,17 +591,23 @@ def show_user_tab():
         start_date = st.date_input("Start Date", st.session_state.start_date)
         end_date = st.date_input("End Date", st.session_state.end_date)
 
-    
-
         # Update session state variables when dates are changed
         st.session_state.start_date = start_date
         st.session_state.end_date = end_date
+
+        start_date_str = start_date.strftime("%Y-%m-%d")
+        end_date_str = end_date.strftime("%Y-%m-%d")
+
+        st.button("Enter new period cycle")
+     
+
+
 
         today = datetime.date.today()
         current_year, current_month = today.year, today.month
         
         # Get the selected year and month from the user
-        selected_year = st.selectbox("Select Year", list(range(2000, 2031)), index=(current_year - 2000))
+        selected_year = st.selectbox("Select Year", list(range(1960, 2031)), index=(current_year - 1960))
         selected_month = st.selectbox("Select Month", [datetime.date(2000, m, 1).strftime("%B") for m in range(1, 13)], index=current_month - 1)
 
         # Convert month name to numeric value
@@ -625,22 +631,53 @@ def show_user_tab():
         fertile_cycle_start = end_date + datetime.timedelta(days=15)
         fertile_cycle_end = fertile_cycle_start + datetime.timedelta(days=4)
 
-        start_date_str = start_date.strftime("%Y-%m-%d")
-        end_date_str = end_date.strftime("%Y-%m-%d")
-        fertile_cycle_start_str = fertile_cycle_start.strftime("%Y-%m-%d")
-        fertile_cycle_end_str = fertile_cycle_end.strftime("%Y-%m-%d")
+
+
+        ISTHEDATEWRONG,ERRORINPRECICTION,PREDICTED = PREDICT( start_date_str, end_date_str,1)
+        st.write("Your Period is Off By")
+        st.write(ERRORINPRECICTION)
         ######AARYA
         with sqlite3.connect('PeriodTracker.db') as conn:
     
         #conn = sqlite3.connect('PeriodTracker.db') #database path
-         cur = conn.cursor()
-         userid = 1
-         query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
-         df = pd.read_sql_query(query, conn)
+            cur = conn.cursor()
+            userid = 1
+            query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
+            df = pd.read_sql_query(query, conn)
+            
+
+            start_array = df['Start'].to_numpy()
+            end_array = df['End'].to_numpy()
+        
+       
+        
+        
+        # if  ISTHEDATEWRONG == 0:
+        #   #if ERRORINPRECICTION < 10:
+              
+              
+        #   #else: 
+        #   #QUESTIONS
+                  
+        # else:
+        #     st.write("Please Enter a Valid Date")
+           
         
 
-        start_array = df['Start'].to_numpy()
-        end_array = df['End'].to_numpy()
+        for i in range(len(PREDICTED)):
+            #   start_array = start_array + PREDICTED[i][0]
+            #   end_array.append(PREDICTED[i][1])
+            lst = list(start_array)
+            lst.append(PREDICTED[i][0])
+            start_array = np.asarray(lst)
+
+            lst2 = list(end_array)
+            lst2.append(PREDICTED[i][1])
+            end_array = np.asarray(lst2)
+
+           
+       
+       
         fertile_start_array = end_array
         st.write(start_array)
 
@@ -662,8 +699,6 @@ def show_user_tab():
         ######AARYA
         
 
-
-        date_time_array = [start_date_str]
 
         for week in calendar:
             for day in week:
@@ -769,7 +804,6 @@ def show_user_tab():
             padding: 10px;
         }
         """
-
         # JavaScript code to handle date selection
         calendar_js = """
         <script>
