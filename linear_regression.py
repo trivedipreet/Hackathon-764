@@ -11,12 +11,15 @@ import sqlite3
 from utils import add_new_row_to_table
 
 
-def PREDICT():
+def PREDICT(STARTDATE,ENDDATE,USERID):
+ PROBLEMVALUE = 0
+ ERRORVALUE = 0
+
  with sqlite3.connect('PeriodTracker.db') as conn:
     
     #conn = sqlite3.connect('PeriodTracker.db') #database path
     cur = conn.cursor()
-    userid = 1
+    userid = USERID
     query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
     df = pd.read_sql_query(query, conn)
     #print(df)
@@ -87,88 +90,34 @@ def PREDICT():
     formatted_next_period_end_date_2 = next_period_end_date_2.strftime('%Y-%m-%d')
     formatted_next_period_start_date_3 = next_period_start_date_3.strftime('%Y-%m-%d')
     formatted_next_period_end_date_3 = next_period_end_date_3.strftime('%Y-%m-%d')
-
-    print("Predicted next period start date:", formatted_next_period_start_date)
-    print("Predicted next period end date:", formatted_next_period_end_date)
-
-     
-    print("Predicted cycle-2 period start date:", formatted_next_period_start_date_2)
-    print("Predicted cycle-2 period end date:", formatted_next_period_end_date_2)
-    print("Predicted cycle-3 period start date:", formatted_next_period_start_date_3)
-    print("Predicted cycle-3 period end date:", formatted_next_period_end_date_3) 
-    
-    # # Calculate the predicted next cycle length
-    # last_predicted_cycle_length = cycle_length[-1]
-
-    # # Calculate the predicted next period start date
-    # last_period_end_date = datetime.strptime(df['End'].iloc[-1], '%Y-%m-%d')
-    # next_period_start_date = last_period_end_date + timedelta(days=last_predicted_cycle_length)
-
-    # # Calculate the predicted next period end date
-    # next_period_end_date = next_period_start_date + timedelta(days=periods[-1])
-
-    # # Format and print the results
-    # formatted_next_period_start_date = next_period_start_date.strftime('%Y-%m-%d')
-    # formatted_next_period_end_date = next_period_end_date.strftime('%Y-%m-%d')
-
-    # print("Predicted next period start date:", formatted_next_period_start_date)
-    # print("Predicted next period end date:", formatted_next_period_end_date)
-
-
-
-    #Calculate irregularities
-     # Get the current year
-    """
-    current_year = datetime.now().year
-    current_month = datetime.now().month
-    endyear = current_year
-
-    print("Start Date?")
-    daystart = input("Day: ")
-    monthstart = input("Month: ")
-
-    print("End Date?")
-    dayend = input("Day: ")
-    monthend = input("Month: ")
-
-    if current_month == 12:
-      endyear = int(input("End Year? "))"""
-    
-    
-    #start <= end <= current 
-
-    '''
-    ActualDateSTART = f"{current_year}-0{current_month}-{daystart} "
-    ActualDateEND = f"{end_year}-0{endmonth}-{dayend} "
-    start_date = datetime.strptime(ActualDateSTART, "%Y-%m-%d ")
-    '''
+   
+    PREDICTEDVALUES = [[formatted_next_period_start_date,formatted_next_period_end_date],[formatted_next_period_start_date_2,formatted_next_period_end_date_2],[formatted_next_period_start_date_3,formatted_next_period_end_date_3]]
     # Define the format for the input dates
     input_format = "%Y-%m-%d"
     
     #try:
     # Parse the input dates using the specified format
 
-    while(True):#CHANGE TO WHILE INPUT IS INVALID
-        start_date =input('Enter start date: ')
-        end_date = input('Enter end date: ')
-        start_date= datetime.strptime(start_date, input_format).date()
-        end_date = datetime.strptime(end_date, input_format).date()
+    
+    start_date= datetime.strptime(STARTDATE, input_format).date()
+    end_date = datetime.strptime(ENDDATE, input_format).date()
 
         # Check if start date is smaller than end date
-        if start_date <= end_date and end_date <= datetime.strptime(str(datetime.now().date()), input_format).date():
-            print("Start date:", start_date)
-            print("End date:", end_date)
-            break
-        else:
+    if start_date <= end_date and end_date <= datetime.strptime(str(datetime.now().date()), input_format).date():
+         ERRORVALUE = 0
+    else:
             #Display a message
-            print("Start date should be smaller than end date.")
-
-
+           VALUE = 1
+           print("Start date should be smaller than end date.")
    
     ErrorvalINT = (abs(next_period_start_date.date() - start_date)).days
-    print("Error Value:", ErrorvalINT)
+    ERRORVALUE = ErrorvalINT
+ return PROBLEMVALUE, ERRORVALUE,PREDICTEDVALUES;
 
-    if ErrorvalINT < 10:
+
+'''
+
+   if ErrorvalINT < 10:
         new_row_data = {
         'start': str(start_date),
         'end': str(end_date)
@@ -203,7 +152,7 @@ def PREDICT():
 
 
 
-'''
+
     except ValueError:
         print("Invalid date format. Please enter valid dates in yyyy-mm-dd format.")
     
