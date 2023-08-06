@@ -112,7 +112,7 @@ def PREDICT(STARTDATE,ENDDATE,USERID):
    
     ErrorvalINT = (abs(next_period_start_date.date() - start_date)).days
     ERRORVALUE = ErrorvalINT
- return PROBLEMVALUE, ERRORVALUE,PREDICTEDVALUES;
+ return PROBLEMVALUE, ERRORVALUE,PREDICTEDVALUES
 
 
 '''

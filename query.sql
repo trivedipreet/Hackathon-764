@@ -12,3 +12,4 @@ WHERE name = 'Walani';
 SELECT ngo_visit FROM regionInfo
 WHERE name = 'Walani';
 
+drop table periodLog

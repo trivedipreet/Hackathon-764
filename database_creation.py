@@ -71,9 +71,10 @@ periodData.to_sql('periodLog', conn, if_exists='append', index=False)
 regionData = pd.read_csv('Population.csv', header=0)  
 regionData.to_sql('regionInfo', conn, if_exists='append', index=False)
 
+'''
+
 periodData = pd.read_excel('SyntheticData.xlsx', header=0)  
 periodData.to_sql('periodLog', conn, if_exists='append', index=False)
 conn.commit()
-'''
 #except:
 #    print("Unable to connect to database")

@@ -679,7 +679,7 @@ def show_user_tab():
        
        
         fertile_start_array = end_array
-        st.write(start_array)
+        #st.write(start_array)
 
         for i in range(len(end_array)):
             input_format = "%Y-%m-%d"
@@ -1003,7 +1003,7 @@ def show_doctor_tab():
                 st.button(_("Book visit"), on_click=clicked, args=[2])
                 if st.session_state.clicked[2]:
                     #st.write('The second button was clicked')
-                    update_visit(_('doctor'), st.session_state.region, st.session_state.id)
+                    update_visit(_('doctor'), st.session_state.region, st.session_state.start_date)
                     result_message = st.empty()
                     result_message.success(f"Booked region: {st.session_state.region}")
                     pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date,region_letter)
@@ -1128,7 +1128,7 @@ def show_ngo_tab():
                 st.button(_('Book visit'), on_click=clicked, args=[2])
                 if st.session_state.clicked[2]:
                     #st.write('The second button was clicked')
-                    update_visit('ngo', st.session_state.region, st.session_state.id)
+                    update_visit('ngo', st.session_state.region, st.session_state.start_date)
                     result_message = st.empty()
                     result_message.success(f"Booked region: {st.session_state.region}")
                     pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date,region_letter)
