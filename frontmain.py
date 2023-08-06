@@ -1,7 +1,7 @@
 from __future__ import annotations
 import streamlit as st
 import time
-#import gettext
+import gettext
 import os
 import locale
 import datetime
@@ -29,16 +29,18 @@ from linear_regression import PREDICT
 #global user_role
 user_role = None
 
-#def load_translations(lang):
-#localedir = os.path.join(os.path.dirname(__file__), 'locales')
-# Get the absolute path of the current script
-#script_path = os.path.abspath(__file__)
-# Construct the absolute path of the 'locales' directory based on the script path
-#localedir = os.path.join(os.path.dirname(script_path), 'locales')
+def load_translations(lang):
+    # Set the locale for the selected language
+    locale.setlocale(locale.LC_ALL, lang)
 
-#translation = gettext.translation('messages', localedir=localedir, languages=[lang])
-#translation.install()
-#return translation'''
+    # Get the absolute path of the 'locales' directory in the current script's directory
+    localedir = os.path.join(os.path.dirname(__file__), 'locales')
+
+    # Load the translations based on the selected language
+    translation = gettext.translation('messages', localedir=localedir, languages=[lang])
+    translation.install()
+
+    return translation
 
 
 
@@ -62,11 +64,13 @@ def generate_appointment_letter(selected_district1, selected_district2,selected_
     c = canvas.Canvas(buffer, pagesize=letter)
     c.setFont("Helvetica", 20)
 
-    c.drawString(100, 750, "Confirmation Letter")
+    c.drawString(100, 750, (_("Confirmation Letter")))
     c.drawString(100, 700, f"District Preference 1: {selected_district1}")
     c.drawString(100, 680, f"District Preference 2: {selected_district2}")
     c.drawString(100, 660, f"District Preference 3: {selected_district3}")
-    c.drawString(100, 640, f"Date of Visit: {date_of_visit}")
+    c.drawString(100, 640, f"Region of Visit: {selected_district3}")
+    c.drawString(100, 620, f"Date of Visit: {date_of_visit}")
+    
 
     c.save()
 
@@ -102,24 +106,24 @@ def generate_calendar(year, month):
 # Define a function for handling registration of regular patients
 def register_regular_patient():
     # Your code for handling registration of regular patients goes here
-    st.subheader("Regular Patient Sign Up")
-    st.write("Sign Up as a Regular Patient")
+    st.subheader(_("Regular Patient Sign Up"))
+    st.write(_("Sign Up as a Regular Patient"))
 
-    user_name_reg = st.text_input("Username", key="user_name_input1")
-    password_reg = st.text_input("Password", key="password_input1", type="password")
-    confirm_password_reg = st.text_input("Confirm Password", type="password",key="confirm_password_input1")
+    user_name_reg = st.text_input(_("Username"), key="user_name_input1")
+    password_reg = st.text_input(_("Password"), key="password_input1", type="password")
+    confirm_password_reg = st.text_input(_("Confirm Password"), type="password",key="confirm_password_input1")
 
-    if st.button("Sign Up", key="regular_patient_register_button"):
+    if st.button(_("Sign Up"), key="regular_patient_register_button"):
         # Check if any field is empty
         if not user_name_reg or not password_reg or not confirm_password_reg:
-            st.error("Please fill in all fields.")
+            st.error(_("Please fill in all fields."))
         # Check if the password and confirm password match
         elif password_reg != confirm_password_reg:
-            st.error("Passwords do not match!")
+            st.error(_("Passwords do not match!"))
         else:
             # Perform regular patient registration
             # Your code for handling regular patient registration goes here
-            st.success("Regular Patient Registration Successful! Click again to continue")
+            st.success(_("Regular Patient Registration Successful! Click again to continue"))
 
     pass
 
@@ -135,7 +139,7 @@ def show_get_started_popup():
     greeting_placeholder = st.empty()  # Placeholder to display greetings
 
     # Create "Get Started" button with a unique key
-    get_started_button = st.button("Get Started", key="get_started_button")
+    get_started_button = st.button(_("Get Started"), key="get_started_button")
 
     if get_started_button:  # Check if the button is clicked
         st.session_state.started = True  # Set the flag to True when the button is clicked
@@ -158,14 +162,14 @@ def show_get_started_popup():
 
 def show_tabs():
     #global user_role
-    st.subheader("Welcome!")
-    st.write("Create an Account or Log In to Existing Account")
+    st.subheader(_("Welcome!"))
+    st.write(_("Create an Account or Log In to Existing Account"))
 
     # Add a selection box for choosing the user role (doctor, NGO, or user)
-    user_role = st.selectbox("Select User Role", ["User", "Doctor", "NGO" ],key="select2")
+    user_role = st.selectbox(_("Select User Role"), [_("User"), _("Doctor"), _("NGO") ],key="select2")
 
-    tabs = ["Sign Up", "Sign In"]
-    selected_tab = st.selectbox("Sign Up/Sign In", tabs)
+    tabs = [_("Sign Up"), _("Sign In")]
+    selected_tab = st.selectbox(_("Sign Up/Sign In"), tabs)
 
     if selected_tab == "Sign Up":
         # Show the registration page based on the selected role
@@ -245,7 +249,7 @@ def get_towns(selected_district):
     return df['Name'].unique()
 
 def Button():
-    st.title("")
+    #st.title("")
     
     # Retrieve data from the database and store it in a DataFrame
     df = get_data_from_db()
@@ -254,13 +258,13 @@ def Button():
     unique_districts = df['District'].unique()
 
     # Select the district using a dropdown
-    selected_district = st.selectbox('Select a district', unique_districts)
+    selected_district = st.selectbox(_('Select a district'), unique_districts)
 
     # Get the towns based on the selected district
     towns = get_towns(selected_district)
 
     # Select the town using a second dropdown
-    selected_town = st.selectbox('Select a town', towns)
+    selected_town = st.selectbox(_('Select a town'), towns)
 
     # Display the selected district and town
     # st.write("Selected District:", selected_district)
@@ -269,57 +273,57 @@ def Button():
 
 #FUNCTION CHANGED BY RUJUTA
 def show_user_register_page():
-    st.subheader("Sign Up")
-    st.write("Sign Up if you do not already have an account")
+    st.subheader(_("Sign Up"))
+    st.write(_("Sign Up if you do not already have an account"))
 
     # Add the registration form here
-    user_name = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    confirm_password = st.text_input("Confirm Password", type="password")
+    user_name = st.text_input(_("Username"))
+    password = st.text_input(_("Password"), type="password")
+    confirm_password = st.text_input(_("Confirm Password"), type="password")
     
     
     
-    age = st.number_input("Age", min_value=1, max_value=150, value=18)
-    gender = st.selectbox("Gender", ["Female", "Other", "Male"])
+    age = st.number_input(_("Age"), min_value=1, max_value=150, value=18)
+    gender = st.selectbox(_("Gender"), ["Female", "Other", "Male"])
     region = Button()
-    contact = st.number_input("Contact Number", step=1, format="%d")
+    contact = st.number_input(_("Contact Number"), step=1, format="%d")
 
-    if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
+    if st.button(_("Sign Up"), key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
         if not user_name or not password or not confirm_password or not age or not gender or not region:
-            st.error("Please fill in all required fields.")
+            st.error(_("Please fill in all required fields."))
         # Check if the password and confirm passw
         # ord match
         elif password != confirm_password:
-            st.error("Passwords do not match!")
+            st.error(_("Passwords do not match!"))
         else:
             # Process the registration form
             insert_user_data(user_name, password, age, gender, region, contact)
-            st.success("Registration Successful! Click again to continue")
+            st.success(_("Registration Successful! Click again to continue"))
             st.session_state.register_completed = True
 
 
 def show_user_login_page():
     # Implement the login page here
-    st.subheader("Sign In")
-    st.write("Sign In if you already have an account:")
-    user_name2 = st.text_input("Username")
-    password2 = st.text_input("Password", type="password")
+    st.subheader(_("Sign In"))
+    st.write(_("Sign In if you already have an account:"))
+    user_name2 = st.text_input(_("Username"))
+    password2 = st.text_input(_("Password"), type="password")
 
     if st.button("Sign In", key="signin_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
         if not user_name2 or not password2:
-            st.error("Please fill in all fields.")
+            st.error(_("Please fill in all fields."))
         else:
             # Check the username and password against the database
             result = check_user_credentials(user_name2, password2)
 
             if result is not None:
-                st.success("Login successful! Click again to continue")
+                st.success(_("Login successful! Click again to continue"))
                 st.session_state.login_completed = True
                 
             else:
-                st.error("Invalid username or password.")
+                st.error(_("Invalid username or password."))
 
 def insert_doctor_data(user_name, password, qualification, reg_no, age, gender, contact):
     # Connect to the SQLite database
@@ -338,20 +342,20 @@ def insert_doctor_data(user_name, password, qualification, reg_no, age, gender, 
     
     
     st.session_state.id = did
-    print(st.session_state.id," in doctor register")
+    print(st.session_state.id,_(" in doctor register"))
     conn.commit()
     conn.close()
 
 #FUNCTION CHANGED BY RUJUTA
 def show_doctor_register_page():
-    st.subheader("Sign Up")
-    st.write("Sign Up if you do not already have an account")
+    st.subheader(_("Sign Up"))
+    st.write(_("Sign Up if you do not already have an account"))
 
     # Add the registration form here
-    user_name = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    confirm_password = st.text_input("Confirm Password", type="password")
-    qualification = st.text_input("Qualification")
+    user_name = st.text_input(_("Username"))
+    password = st.text_input(_("Password"), type="password")
+    confirm_password = st.text_input(_("Confirm Password"), type="password")
+    qualification = st.text_input(_("Qualification"))
     df = get_data_from_db()
 
   
@@ -362,22 +366,22 @@ def show_doctor_register_page():
     #selected_district3 = st.selectbox('Region 3', unique_districts)'''
     #AARYA ADD REGION HERE
 
-    age = st.number_input("Age", min_value=1, max_value=150, value=18)
-    gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-    contact = st.number_input("Contact Number", step=1, format="%d")
-    reg_no = st.number_input("Registration Number", step=1, format="%d")
+    age = st.number_input(_("Age"), min_value=1, max_value=150, value=18)
+    gender = st.selectbox(_("Gender"), [_("Male"), _("Female"), _("Other")])
+    contact = st.number_input(_("Contact Number"), step=1, format="%d")
+    reg_no = st.number_input(_("Registration Number"), step=1, format="%d")
 
     if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
         if not user_name or not password or not confirm_password or not qualification or not reg_no or not age or not gender:
-            st.error("Please fill in all required fields.")
+            st.error(_("Please fill in all required fields."))
         # Check if the password and confirm password match
         elif password != confirm_password:
-            st.error("Passwords do not match!")
+            st.error(_("Passwords do not match!"))
         else:
             # Process the registration form
             insert_doctor_data(user_name, password, qualification, reg_no, age, gender, contact)
-            st.success("Registration Successful! Click again to continue")
+            st.success(_("Registration Successful! Click again to continue"))
             st.session_state.doctor_register_completed = True
             st.session_state.register_completed = True
 
@@ -405,24 +409,24 @@ def check_doctor_credentials(username, password):
 
 # Function to display the doctor login page
 def show_doctor_login_page():
-    st.subheader("Doctor Sign In")
-    st.write("Sign In if you are a registered doctor:")
-    doctor_id = st.text_input("Doctor ID")
-    password = st.text_input("Password", type="password")
+    st.subheader(_("Doctor Sign In"))
+    st.write(_("Sign In if you are a registered doctor:"))
+    doctor_id = st.text_input(_("Doctor ID"))
+    password = st.text_input(_("Password"), type="password")
 
-    if st.button("Sign In", key="doctor_signin_button"):
+    if st.button(_("Sign In"), key="doctor_signin_button"):
         if not doctor_id or not password:
-            st.error("Please fill in all fields.")
+            st.error(_("Please fill in all fields."))
         else:
             result = check_doctor_credentials(doctor_id, password)
 
             if result is not None:
-                st.success("Login successful! Click again to continue")
+                st.success(_("Login successful! Click again to continue"))
                 st.session_state.login_completed = True
                 st.session_state.doctor_login_completed = True
                 # Add other doctor-specific functionalities here
             else:
-                st.error("Invalid Doctor ID or password.")
+                st.error(_("Invalid Doctor ID or password."))
 
 
 def insert_ngo_data(user_name, password, reg_no, contact):
@@ -444,13 +448,13 @@ def insert_ngo_data(user_name, password, reg_no, contact):
 
 #FUNCTION CHANGED BY RUJUTA
 def show_ngo_register_page():
-    st.subheader("Sign Up")
-    st.write("Sign Up if you do not already have an account")
+    st.subheader(_("Sign Up"))
+    st.write(_("Sign Up if you do not already have an account"))
 
     # Add the registration form here
-    user_name = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    confirm_password = st.text_input("Confirm Password", type="password")
+    user_name = st.text_input(_("Username"))
+    password = st.text_input(_("Password"), type="password")
+    confirm_password = st.text_input(_("Confirm Password"), type="password")
     df = get_data_from_db()
 
     unique_districts = df['District'].unique()
@@ -462,21 +466,21 @@ def show_ngo_register_page():
 
     #AARYA ADD REGION HERE
 
-    reg_no = st.number_input("Registration Number", step=1, format="%d")
+    reg_no = st.number_input(_("Registration Number"), step=1, format="%d")
     
-    contact = st.number_input("Contact Number", step=1, format="%d")
+    contact = st.number_input(_("Contact Number"), step=1, format="%d")
 
-    if st.button("Sign Up", key="register_button"):  # Add a unique key to the "Register" button
+    if st.button(_("Sign Up"), key="register_button"):  # Add a unique key to the "Register" button
         # Check if any field is empty
         if not user_name or not password or not confirm_password or not reg_no or not contact:
-            st.error("Please fill in all required fields.")
+            st.error(_("Please fill in all required fields."))
         # Check if the password and confirm password match
         elif password != confirm_password:
-            st.error("Passwords do not match!")
+            st.error(_("Passwords do not match!"))
         else:
             # Process the registration form
             insert_ngo_data(user_name, password, reg_no, contact)
-            st.success("Registration Successful! Click again to continue")
+            st.success(_("Registration Successful! Click again to continue"))
             st.session_state.register_completed = True
             st.session_state.ngo_register_completed = True
 
@@ -504,24 +508,24 @@ def check_ngo_credentials(username, password):
 
 # Function to display the NGO login page
 def show_ngo_login_page():
-    st.subheader("NGO Sign In")
-    st.write("Sign In if you are a registered NGO:")
-    ngo_id = st.text_input("NGO ID")
-    password = st.text_input("Password", type="password")
+    st.subheader(_("NGO Sign In"))
+    st.write(_("Sign In if you are a registered NGO:"))
+    ngo_id = st.text_input(_("NGO ID"))
+    password = st.text_input(_("Password"), type="password")
 
-    if st.button("Sign In", key="ngo_signin_button"):
+    if st.button(_("Sign In"), key="ngo_signin_button"):
         if not ngo_id or not password:
-            st.error("Please fill in all fields.")
+            st.error(_("Please fill in all fields."))
         else:
             result = check_ngo_credentials(ngo_id, password)
 
             if result is not None:
-                st.success("Login successful! Click again to continue")
+                st.success(_("Login successful! Click again to continue"))
                 st.session_state.login_completed = True
                 st.session_state.ngo_login_completed = True
                 # Add other NGO-specific functionalities here
             else:
-                st.error("Invalid NGO ID or password.")
+                st.error(_("Invalid NGO ID or password."))
 
 #FUNCTION CHANGED BY RUJUTA
 def show_user_tab():
@@ -529,8 +533,8 @@ def show_user_tab():
     conn = sqlite3.connect('PeriodTracker.db')
     cur = conn.cursor()
     # Add the hamburger menu with options
-    menu_options = ["Dashboard", "Calendar", "Download Report", "Contact", "Announcements", "Log out"]
-    selected_option = st.sidebar.radio("Menu", menu_options)
+    menu_options = [_("Dashboard"), _("Calendar"), _("Download Report"), _("Contact"), _("Announcements"), _("Log out")]
+    selected_option = st.sidebar.radio(_("Menu"), menu_options)
     if 'start_date' not in st.session_state:
         st.session_state.start_date = datetime.date.today()
     if 'end_date' not in st.session_state:
@@ -539,15 +543,11 @@ def show_user_tab():
     
     if selected_option == "Dashboard":
         # Display Dashboard content here
-        st.title("Dashboard")
-        st.subheader("Welcome!")
-        st.subheader("Your Period is expected to arrive in X days.")
-        st.write("This is your Dashboard.")
+        st.title(_("Dashboard"))
+        st.subheader(_("Welcome!"))
+        st.write(_("This is your Dashboard."))
         
-        
-        
-        
- #age, weight, height, cycle(r(2)/i(4)), cycle length, #abortions, pregnant, 
+        #age, weight, height, cycle(r(2)/i(4)), cycle length, #abortions, pregnant, 
  # weight gain, hair growth,skin darkening, hair loss, pimples, fast food, exercise
         
         # Checkboxes
@@ -583,7 +583,6 @@ def show_user_tab():
 
         # pcos_list = [age, weight, height, irregular_cycle, cycle_length, abortions, is_pregnant, weight_gain, hair_growth ,skin_darkening, hair_loss, acne, fastfood, exercise]
         # print("pcos_list") 
-
 
     elif selected_option == "Calendar":
         st.title("Calendar")
@@ -641,11 +640,11 @@ def show_user_tab():
         with sqlite3.connect('PeriodTracker.db') as conn:
     
         #conn = sqlite3.connect('PeriodTracker.db') #database path
-         cur = conn.cursor()
-         userid = 1
-         query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
-         df = pd.read_sql_query(query, conn)
-        
+            cur = conn.cursor()
+            userid = 1
+            query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
+            df = pd.read_sql_query(query, conn)
+            
 
         start_array = df['Start'].to_numpy()
         end_array = df['End'].to_numpy()
@@ -675,7 +674,7 @@ def show_user_tab():
             lst2 = list(end_array)
             lst2.append(PREDICTED[i][1])
             end_array = np.asarray(lst2)
-\
+
            
        
        
@@ -848,12 +847,11 @@ def show_user_tab():
         st.markdown(f"<style>{calendar_css}</style>", unsafe_allow_html=True)
         st.markdown(calendar_html, unsafe_allow_html=True)
         st.markdown(calendar_js, unsafe_allow_html=True)
-    
         
     elif selected_option == "Download Report":
         # Display History content here
-        st.title(("Download Report"))
-        st.write("You can Download report here.")
+        st.title((_("Download Report")))
+        st.write(_("You can Download report here."))
     
     elif selected_option == "Contact":
         # Display Contact content here
@@ -870,7 +868,7 @@ def show_user_tab():
 
     elif selected_option == "Announcements":
         # Display Announcements content here
-        st.title("Announcements")
+        st.title(_("Announcements"))
 
         cur.execute("SELECT region FROM USER WHERE id = ?", (st.session_state.id,))
         user_region =cur.fetchone()[0]
@@ -886,13 +884,13 @@ def show_user_tab():
 
 
     elif selected_option == "Log out":
-        logout_button = st.button("Log out")
+        logout_button = st.button(_("Log out"))
         if logout_button:
             # Log out and reset the session state
             st.session_state.started = False
             st.session_state.register_completed = False
             st.session_state.login_completed = False
-            st.write("You have been logged out. Click again to confirm Log Out")
+            st.write(_("You have been logged out. Click again to confirm Log Out"))
     
     conn.close()
 
@@ -940,30 +938,30 @@ def insert_doctor_regions(region1, region2, region3, doctor_id):
 #FUNCTION CHANGED BY RUJUTA
 def show_doctor_tab():
     print(st.session_state.id," in doctor tab")
-    st.title("Doctor Dashboard")
+    st.title(_("Doctor Dashboard"))
     # Add doctor-specific functionalities here
     
     
     conn = sqlite3.connect('PeriodTracker.db')
     cur = conn.cursor()
     st.session_state.region = None
-    menu_options = ["Dashboard","Contact Us", "Log out"]
-    selected_option = st.sidebar.radio("Menu", menu_options)
+    menu_options = [_("Dashboard"),_("Contact Us"), _("Log out")]
+    selected_option = st.sidebar.radio(_("Menu"), menu_options)
     if selected_option == "Dashboard":
-        st.subheader("Plan a Visit:")
-        st.write("**Select Region of Visit:**")
+        st.subheader(_("Plan a Visit:"))
+        st.write(_("**Select Region of Visit:**"))
         df = get_data_from_db()
 
         # Get unique districts from the DataFrame
         unique_districts = df['District'].unique()
 
         # Select the district using a dropdown
-        selected_district1 = st.selectbox('**Preference 1**', unique_districts)
-        selected_district2 = st.selectbox('**Preference 2**', unique_districts)
-        selected_district3 = st.selectbox('**Preference 3**', unique_districts)
+        selected_district1 = st.selectbox(_('**Preference 1**'), unique_districts)
+        selected_district2 = st.selectbox(_('**Preference 2**'), unique_districts)
+        selected_district3 = st.selectbox(_('**Preference 3**'), unique_districts)
         if 'start_date' not in st.session_state:
             st.session_state.start_date = datetime.date.today()
-        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
+        start_date = st.date_input(_("**Select Date of Visit:**"), st.session_state.start_date)
         # Update session state variables when dates are changed
         st.session_state.start_date = start_date
         
@@ -982,25 +980,25 @@ def show_doctor_tab():
         if st.session_state.clicked[1]:
             if insert_doctor_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
                 reg_list = regions('doctor', st.session_state.id)
-                st.title("Select a Region")
-                st.session_state.region = st.radio("Select a region:", reg_list)
-                st.write("Selected Region:", st.session_state.region)
+                st.title(_("Select a Region"))
+                st.session_state.region = st.radio(_("Select a region:"), reg_list)
+                st.write(_("Selected Region:"), st.session_state.region)
                   
-                st.button('Book visit', on_click=clicked, args=[2])
+                st.button(_("Book visit"), on_click=clicked, args=[2])
                 if st.session_state.clicked[2]:
                     #st.write('The second button was clicked')
-                    update_visit('doctor', st.session_state.region, st.session_state.id)
+                    update_visit(_('doctor'), st.session_state.region, st.session_state.id)
                     result_message = st.empty()
                     result_message.success(f"Booked region: {st.session_state.region}")
                     pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
-                    st.success("Confirmation Letter generated successfully!")
+                    st.success(_("Confirmation Letter generated successfully!"))
                     st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")           
                 else:
-                    st.warning("Please select a region.")
+                    st.warning(_("Please select a region."))
             else:
-                st.warning("Failed to insert regions.")
+                st.warning(_("Failed to insert regions."))
         else:
-            st.warning("Please select and press confirm.")
+            st.warning(_("Please select and press confirm."))
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")
@@ -1012,7 +1010,7 @@ def show_doctor_tab():
         st.write("shreyabhatkhande@gmail.com")
 
     elif selected_option=="Log Out":
-        logout_button2 = st.button("Log out")
+        logout_button2 = st.button(_("Log out"))
         if logout_button2:
             # Log out and reset the session state
             st.session_state.started = False
@@ -1020,7 +1018,7 @@ def show_doctor_tab():
             st.session_state.login_completed = False
             st.session_state.doctor_login_completed = False
             st.session_state.doctor_register_completed = False
-            st.write("You have been logged out. Click again to confirm Log Out")
+            st.write(_("You have been logged out. Click again to confirm Log Out"))
     conn.close()
 
 
@@ -1067,28 +1065,28 @@ def insert_ngo_regions(region1, region2, region3, ngo_id):
     
 #FUNCTION CHANGED BY RUJUTA
 def show_ngo_tab():
-    st.title("NGO DASHBOARD")
+    st.title(_("NGO DASHBOARD"))
     
     conn = sqlite3.connect('PeriodTracker.db')
     cur = conn.cursor()
-    menu_options = ["Dashboard","Contact Us", "Log out"]
-    selected_option = st.sidebar.radio("Menu", menu_options)
+    menu_options = [_("Dashboard"),_("Contact Us"), _("Log out")]
+    selected_option = st.sidebar.radio(_("Menu"), menu_options)
     if selected_option == "Dashboard":
-        st.subheader("Plan a Visit:")
+        st.subheader(_("Plan a Visit:"))
         
-        st.write("**Select Region of Visit:**")
+        st.write(_("**Select Region of Visit:**"))
         df = get_data_from_db()
 
         # Get unique districts from the DataFrame
         unique_districts = df['District'].unique()
 
         # Select the district using a dropdown
-        selected_district1 = st.selectbox('**Preference 1**', unique_districts)
-        selected_district2 = st.selectbox('**Preference 2**', unique_districts)
-        selected_district3 = st.selectbox('**Preference 3**', unique_districts)
+        selected_district1 = st.selectbox(_('**Preference 1**'), unique_districts)
+        selected_district2 = st.selectbox(_('**Preference 2**'), unique_districts)
+        selected_district3 = st.selectbox(_('**Preference 3**'), unique_districts)
         if 'start_date' not in st.session_state:
             st.session_state.start_date = datetime.date.today()
-        start_date = st.date_input("**Select Date of Visit:**", st.session_state.start_date)
+        start_date = st.date_input(_("**Select Date of Visit:**"), st.session_state.start_date)
         # Update session state variables when dates are changed
         st.session_state.start_date = start_date
         
@@ -1107,25 +1105,25 @@ def show_ngo_tab():
         if st.session_state.clicked[1]:
             if insert_ngo_regions(selected_district1, selected_district2, selected_district3, st.session_state.id):
                 reg_list = regions('ngo', st.session_state.id)
-                st.title("Select a Region")
-                st.session_state.region = st.radio("Select a region:", reg_list)
-                st.write("Selected Region:", st.session_state.region)
+                st.title(_("Select a Region"))
+                st.session_state.region = st.radio(_("Select a region:"), reg_list)
+                st.write(_("Selected Region:"), st.session_state.region)
                   
-                st.button('Book visit', on_click=clicked, args=[2])
+                st.button(_('Book visit'), on_click=clicked, args=[2])
                 if st.session_state.clicked[2]:
                     #st.write('The second button was clicked')
                     update_visit('ngo', st.session_state.region, st.session_state.id)
                     result_message = st.empty()
                     result_message.success(f"Booked region: {st.session_state.region}")
                     pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
-                    st.success("Confirmation Letter generated successfully!")
-                    st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")           
+                    st.success(_("Confirmation Letter generated successfully!"))
+                    st.download_button(label=_("View PDF"), data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")           
                 else:
-                    st.warning("Please select a region.")
+                    st.warning(_("Please select a region."))
             else:
-                st.warning("Failed to insert regions.")
+                st.warning(_("Failed to insert regions."))
         else:
-            st.warning("Please select and press confirm.")
+            st.warning(_("Please select and press confirm."))
 
     elif selected_option=='Contact Us':
         st.title("Contact for site help: ")
@@ -1137,7 +1135,7 @@ def show_ngo_tab():
         st.write("shreyabhatkhande@gmail.com")
 
     elif selected_option=="Log Out":
-        logout_button3 = st.button("Log out")
+        logout_button3 = st.button(_("Log out"))
         if logout_button3:
             # Log out and reset the session state
             st.session_state.started = False
@@ -1145,18 +1143,23 @@ def show_ngo_tab():
             #st.session_state.login_completed = False
             st.session_state.ngo_login_completed = False
             st.session_state.ngo_register_completed = False
-            st.write("You have been logged out. Click again to confirm Log Out")
+            st.write(_("You have been logged out. Click again to confirm Log Out"))
 
 
 
 
 def main():
-    '''lang = st.selectbox("Select Language", ["English", "Hindi"])
-    if lang == "Hindi":
-        _ = load_translations('hi')
-    else:
-        _ = load_translations('en')'''
+    lang = st.selectbox(("Select Language"), [("English"), ("Hindi"), ("Marathi")])
 
+    if lang == "Hindi":
+        translation = load_translations('hi')
+    elif lang == "Marathi":
+        translation = load_translations('mr')
+    else:
+        translation = load_translations('en')
+
+    # Translate the strings using the '_' function from the gettext library
+    _ = translation.gettext
     st.markdown(
         """
         <style>
