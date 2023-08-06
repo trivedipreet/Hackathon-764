@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Language: hi\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
 msgid "Confirmation Letter"
 msgstr "पुष्टिकरण पत्र"
 
@@ -17,7 +22,7 @@ msgid "Regular Patient Sign Up"
 msgstr "नियमित रुग्ण साइन अप करा"
 
 msgid "Sign Up as a Regular Patient"
-msgstr msgstr "नियमित रुग्ण म्हणून साइन अप करा"
+msgstr "नियमित रुग्ण म्हणून साइन अप करा"
 
 msgid "Username"
 "वापरकर्तानाव"
