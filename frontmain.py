@@ -59,7 +59,7 @@ def get_towns(selected_district):
     conn.close()
     return df['Name'].unique()
 
-def generate_appointment_letter(selected_district1, selected_district2,selected_district3, date_of_visit):
+def generate_appointment_letter(selected_district1, selected_district2,selected_district3, date_of_visit,region_letter):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
     c.setFont("Helvetica", 20)
@@ -68,7 +68,7 @@ def generate_appointment_letter(selected_district1, selected_district2,selected_
     c.drawString(100, 700, f"District Preference 1: {selected_district1}")
     c.drawString(100, 680, f"District Preference 2: {selected_district2}")
     c.drawString(100, 660, f"District Preference 3: {selected_district3}")
-    c.drawString(100, 640, f"Region of Visit: {selected_district3}")
+    c.drawString(100, 640, f"Region of Visit: {region_letter}")
     c.drawString(100, 620, f"Date of Visit: {date_of_visit}")
     
 
@@ -533,7 +533,7 @@ def show_user_tab():
     conn = sqlite3.connect('PeriodTracker.db')
     cur = conn.cursor()
     # Add the hamburger menu with options
-    menu_options = [_("Dashboard"), _("Calendar"), _("Download Report"), _("Contact"), _("Announcements"), _("Log out")]
+    menu_options = [_("Dashboard"), _("Calendar"),  _("Contact"), _("Announcements"), _("Log out")]
     selected_option = st.sidebar.radio(_("Menu"), menu_options)
     if 'start_date' not in st.session_state:
         st.session_state.start_date = datetime.date.today()
@@ -591,23 +591,17 @@ def show_user_tab():
         start_date = st.date_input("Start Date", st.session_state.start_date)
         end_date = st.date_input("End Date", st.session_state.end_date)
 
+    
+
         # Update session state variables when dates are changed
         st.session_state.start_date = start_date
         st.session_state.end_date = end_date
-
-        start_date_str = start_date.strftime("%Y-%m-%d")
-        end_date_str = end_date.strftime("%Y-%m-%d")
-
-        st.button("Enter new period cycle")
-     
-
-
 
         today = datetime.date.today()
         current_year, current_month = today.year, today.month
         
         # Get the selected year and month from the user
-        selected_year = st.selectbox("Select Year", list(range(1960, 2101)), index=current_year - 1900)
+        selected_year = st.selectbox("Select Year", list(range(2000, 2031)), index=(current_year - 2000))
         selected_month = st.selectbox("Select Month", [datetime.date(2000, m, 1).strftime("%B") for m in range(1, 13)], index=current_month - 1)
 
         # Convert month name to numeric value
@@ -631,54 +625,25 @@ def show_user_tab():
         fertile_cycle_start = end_date + datetime.timedelta(days=15)
         fertile_cycle_end = fertile_cycle_start + datetime.timedelta(days=4)
 
-
-
-        ISTHEDATEWRONG,ERRORINPRECICTION,PREDICTED = PREDICT( start_date_str, end_date_str,1)
-        st.write("Your Period is Off By")
-        st.write(ERRORINPRECICTION)
+        start_date_str = start_date.strftime("%Y-%m-%d")
+        end_date_str = end_date.strftime("%Y-%m-%d")
+        fertile_cycle_start_str = fertile_cycle_start.strftime("%Y-%m-%d")
+        fertile_cycle_end_str = fertile_cycle_end.strftime("%Y-%m-%d")
         ######AARYA
         with sqlite3.connect('PeriodTracker.db') as conn:
     
         #conn = sqlite3.connect('PeriodTracker.db') #database path
-            cur = conn.cursor()
-            userid = 1
-            query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
-            df = pd.read_sql_query(query, conn)
-            
+         cur = conn.cursor()
+         userid = 1
+         query = "SELECT strftime('%Y-%m-%d',Start) as Start, strftime('%Y-%m-%d',End) as End FROM periodlog WHERE id = {} ORDER BY Start".format(userid)
+         df = pd.read_sql_query(query, conn)
+        
 
         start_array = df['Start'].to_numpy()
         end_array = df['End'].to_numpy()
-       
-       
-        
-        
-        # if  ISTHEDATEWRONG == 0:
-        #   #if ERRORINPRECICTION < 10:
-              
-              
-        #   #else: 
-        #   #QUESTIONS
-                  
-        # else:
-        #     st.write("Please Enter a Valid Date")
-           
-        
-
-        for i in range(len(PREDICTED)):
-            #   start_array = start_array + PREDICTED[i][0]
-            #   end_array.append(PREDICTED[i][1])
-            lst = list(start_array)
-            lst.append(PREDICTED[i][0])
-            start_array = np.asarray(lst)
-
-            lst2 = list(end_array)
-            lst2.append(PREDICTED[i][1])
-            end_array = np.asarray(lst2)
-
-           
-       
-       
         fertile_start_array = end_array
+        st.write(start_array)
+
         for i in range(len(end_array)):
             input_format = "%Y-%m-%d"
             STARTOFi = datetime.datetime.strptime(start_array[i], input_format).date()
@@ -698,28 +663,50 @@ def show_user_tab():
         
 
 
+        date_time_array = [start_date_str]
+
         for week in calendar:
             for day in week:
                 if day == "":
                     calendar_html += "<div class='empty'></div>"
                 else:
+    
                     date_str = f"{selected_year}-{selected_month_number:02d}-{day:02d}"
-                    is_start_date = date_str == start_date_str
-                    is_end_date = date_str == end_date_str
-                    if start_date_str <= date_str <= end_date_str:
-                        if fertile_cycle_start_str <= date_str <= fertile_cycle_end_str:
-                            calendar_html += f"<div class='date fertile'>{day}</div>"
-                            continue
-                    # Check if the current date is between the start and end dates
-                    is_between_dates = start_date <= datetime.date(selected_year, selected_month_number, day) <= end_date
+                
+                    for i in range(len(end_array)):
+                     is_start_date = date_str ==  start_array[i]
+                     is_end_date = date_str == end_array[i]
+                     is_between_dates = start_array[i] < date_str < end_array[i]
+                     is_fertile_date =  fertile_start_array[i] == date_str
+                  
+                     if (is_start_date == True):
+                         break
+                     if (is_between_dates == True):
+                         break
+                     if (is_end_date == True):
+                         break
+                     if (is_fertile_date == True):
+                         break
 
+                     
+                     # Check if the current date is between the start and end dates
+       
+     
+               
+
+                    # Check if the current date is between the start and end dates
+                   
                     classes = "date"
                     if is_start_date:
+                   
                         classes += " start"
                     if is_end_date:
                         classes += " end"
                     if is_between_dates:
                         classes += " between"
+                    if is_fertile_date:
+                        classes += " fertile"
+
 
                     calendar_html += f"<div class='{classes}' onclick='selectDate(this)'>{day}</div>"
                 
@@ -775,7 +762,7 @@ def show_user_tab():
             background-color: red;
         }
 
-        .fertile {
+        .date.fertile {
             background-color: blue;
         }
         .empty {
@@ -847,11 +834,6 @@ def show_user_tab():
         st.markdown(f"<style>{calendar_css}</style>", unsafe_allow_html=True)
         st.markdown(calendar_html, unsafe_allow_html=True)
         st.markdown(calendar_js, unsafe_allow_html=True)
-        
-    elif selected_option == "Download Report":
-        # Display History content here
-        st.title((_("Download Report")))
-        st.write(_("You can Download report here."))
     
     elif selected_option == "Contact":
         # Display Contact content here
@@ -983,14 +965,14 @@ def show_doctor_tab():
                 st.title(_("Select a Region"))
                 st.session_state.region = st.radio(_("Select a region:"), reg_list)
                 st.write(_("Selected Region:"), st.session_state.region)
-                  
+                region_letter = st.session_state.region
                 st.button(_("Book visit"), on_click=clicked, args=[2])
                 if st.session_state.clicked[2]:
                     #st.write('The second button was clicked')
                     update_visit(_('doctor'), st.session_state.region, st.session_state.id)
                     result_message = st.empty()
                     result_message.success(f"Booked region: {st.session_state.region}")
-                    pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
+                    pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date,region_letter)
                     st.success(_("Confirmation Letter generated successfully!"))
                     st.download_button(label="View PDF", data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")           
                 else:
@@ -1108,14 +1090,14 @@ def show_ngo_tab():
                 st.title(_("Select a Region"))
                 st.session_state.region = st.radio(_("Select a region:"), reg_list)
                 st.write(_("Selected Region:"), st.session_state.region)
-                  
+                region_letter = st.session_state.region 
                 st.button(_('Book visit'), on_click=clicked, args=[2])
                 if st.session_state.clicked[2]:
                     #st.write('The second button was clicked')
                     update_visit('ngo', st.session_state.region, st.session_state.id)
                     result_message = st.empty()
                     result_message.success(f"Booked region: {st.session_state.region}")
-                    pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date)
+                    pdf_bytes = generate_appointment_letter(selected_district1, selected_district2, selected_district3,start_date,region_letter)
                     st.success(_("Confirmation Letter generated successfully!"))
                     st.download_button(label=_("View PDF"), data=pdf_bytes, file_name="Appointment_Letter.pdf", mime="application/pdf")           
                 else:
